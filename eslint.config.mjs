@@ -41,10 +41,11 @@ const modules = [
 ];
 
 // Public entry points: a module is only imported through its index.ts
-// (plus auth/client.ts for the browser auth client).
+// (plus auth/client.ts for the browser auth client and db/testing.ts for tests).
+const extraEntryPoints = { auth: ["client.ts"], db: ["testing.ts"] };
 const entryPoint = (type) => ({
   type,
-  fileInternalPath: type === "auth" ? ["index.ts", "client.ts"] : "index.ts",
+  fileInternalPath: ["index.ts", ...(extraEntryPoints[type] ?? [])],
 });
 
 const toSelector = (type) => (modules.includes(type) ? entryPoint(type) : { type });
@@ -109,6 +110,24 @@ const eslintConfig = defineConfig([
         { name: "window", message: "dsp and fingerprint must stay isomorphic." },
         { name: "document", message: "dsp and fingerprint must stay isomorphic." },
         { name: "self", message: "dsp and fingerprint must stay isomorphic." },
+      ],
+    },
+  },
+  // db/testing.ts (PGlite) is an entry point only for test files.
+  {
+    files: ["src/**/*.{ts,tsx}", "scripts/**/*.ts"],
+    ignores: ["**/__tests__/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/modules/db/testing", "**/db/testing"],
+              message: "db/testing is only for files inside __tests__/.",
+            },
+          ],
+        },
       ],
     },
   },
