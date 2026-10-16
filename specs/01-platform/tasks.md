@@ -15,12 +15,12 @@
   - Crea `src/modules/{dsp,fingerprint,capture,db,auth,catalog,recognition,library}/index.ts`, `src/shared/`, `scripts/ingest/`, `scripts/eval/`.
   - Commit: `chore(platform): add modular monolith folder structure`
 
-- [ ] **T4. Vitest y Prettier**
+- [x] **T4. Vitest y Prettier**
   - Cubre: PLT-R2.
   - Verifica: un test trivial en `src/shared/__tests__` pasa con `npm test`.
   - Commit: `chore(platform): configure vitest and prettier`
 
-- [ ] **T5. Límites entre módulos en ESLint**
+- [x] **T5. Límites entre módulos en ESLint**
   - Cubre: PLT-R4.
   - Verifica: el import prohibido de prueba falla; se elimina después de comprobarlo.
   - Commit: `chore(platform): enforce module boundaries with eslint`
