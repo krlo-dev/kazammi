@@ -35,7 +35,7 @@
   - Verifica: `curl localhost:3000/api/health` devuelve `status: "ok"`.
   - Commit: `feat(platform): add health check endpoint`
 
-- [ ] **T8. CI en GitHub Actions**
+- [x] **T8. CI en GitHub Actions**
   - Cubre: PLT-R5.
   - Verifica: workflow en verde tras el push.
   - Commit: `ci(platform): add lint, typecheck, test and build workflow`
