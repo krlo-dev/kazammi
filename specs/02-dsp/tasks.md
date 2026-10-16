@@ -9,7 +9,7 @@
   - Verifica: DFT de impulso y de constante.
   - Commit: `feat(dsp): add reference o(n^2) dft`
 
-- [ ] **T3. Plan de FFT y transformada directa**
+- [x] **T3. Plan de FFT y transformada directa**
   - Cubre: DSP-R1, DSP-R3, DSP-R4.
   - Verifica: todos los criterios de DSP-R1 y DSP-R3 (comparación con DFT, casos analíticos, Parseval).
   - Commit: `feat(dsp): add iterative radix-2 fft with bit-reversal`
@@ -41,6 +41,6 @@
 
 | Medida | Valor |
 |---|---|
-| Error máx. FFT vs DFT (N = 4096) | pendiente |
+| Error máx. FFT vs DFT (N = 4096) | 5.83e-13 (entrada compleja aleatoria, semilla 4096) |
 | STFT de 10 s (Node) | pendiente |
 | FFT de 1024 puntos (promedio) | pendiente |
