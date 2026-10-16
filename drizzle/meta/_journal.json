@@ -15,6 +15,13 @@
       "when": 1792176154752,
       "tag": "0001_fingerprints_hash_index",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792181856148,
+      "tag": "0002_auth",
+      "breakpoints": true
     }
   ]
 }

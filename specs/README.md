@@ -42,7 +42,7 @@ Prioridad con MoSCoW: **M** (must), **S** (should), **C** (could), **W** (won't,
 | 07 | [capture](./07-capture/) | Micrófono, remuestreo y Web Worker | Borrador |
 | 08 | [ui](./08-ui/) | Pantallas, estados y referencias de diseño (Claude Code + Impeccable) | Borrador |
 | 09 | [deploy](./09-deploy/) | Vercel + Neon | Borrador |
-| 10 | [auth](./10-auth/) | Registro e inicio de sesión con correo y contraseña (bcrypt + Better Auth) | Borrador |
+| 10 | [auth](./10-auth/) | Registro e inicio de sesión con correo y contraseña (bcrypt + Better Auth) | Hecha |
 | 11 | [library](./11-library/) | Guardadas y playlists personalizadas | Borrador |
 
 El orden de implementación no sigue la numeración: ver [`roadmap.md`](./00-foundation/roadmap.md).

@@ -1,10 +1,20 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
+import { getAuth } from "@/modules/auth";
 import { createCatalogRepository } from "@/modules/catalog";
 import type { Database } from "@/modules/db";
 import { createTestDb } from "@/modules/db/testing";
 
-const state = vi.hoisted(() => ({ db: undefined as unknown }));
+const state = vi.hoisted(() => ({ db: undefined as unknown, headers: new Headers() }));
+
+// The real auth instance (getAuth) runs on the same PGlite database as the catalog.
+vi.stubEnv("DATABASE_URL", "postgres://unused@localhost/test");
+vi.stubEnv("BETTER_AUTH_SECRET", "test-secret-with-at-least-32-characters!");
+vi.stubEnv("BETTER_AUTH_URL", "http://localhost:3000");
+vi.mock("next/headers", () => ({
+  headers: async () => state.headers,
+  cookies: async () => ({ get: () => undefined, set: () => {}, delete: () => {} }),
+}));
 
 vi.mock("@/modules/db", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/modules/db")>()),
@@ -48,8 +58,30 @@ describe("GET /api/tracks/[id]/cover", () => {
       track: { ...base, sourcePath: "b.mp3", contentSha256: "b", title: "B" },
       cover: null,
     });
+
+    const { headers } = await getAuth().api.signUpEmail({
+      body: { name: "Ana", email: "ana@example.com", password: "una-clave-segura" },
+      returnHeaders: true,
+    });
+    const cookie = headers
+      .getSetCookie()
+      .map((c) => c.split(";")[0])
+      .join("; ");
+    state.headers = new Headers({ cookie });
   });
   afterAll(() => close());
+
+  it("answers 401 without a valid session", async () => {
+    const signedIn = state.headers;
+    state.headers = new Headers();
+    try {
+      const response = await call(String(withCover));
+      expect(response.status).toBe(401);
+      expect(response.headers.get("Content-Type")).not.toBe("image/webp");
+    } finally {
+      state.headers = signedIn;
+    }
+  });
 
   it("serves the cover as webp with immutable caching", async () => {
     const response = await call(String(withCover));

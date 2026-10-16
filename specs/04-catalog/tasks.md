@@ -33,7 +33,7 @@
 - [x] **T6. Ruta de portadas**
   - Cubre: CAT-R3.
   - Commit: `feat(catalog): serve track covers with immutable caching`
-  - Nota: la validación de sesión (`requireUserForApi()`) se agrega en `10-auth` T5; la ruta tiene un `TODO(10-auth)`.
+  - Nota: desde `10-auth` T5 la ruta exige sesión con `withApiAuth` (401 sin sesión).
 
 - [x] **T7. Verificación del plan en Neon**
   - Después de la primera ingesta (`05-ingestion`): `VACUUM ANALYZE` y `EXPLAIN ANALYZE`; anotar el resultado abajo.

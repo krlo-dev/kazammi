@@ -1,3 +1,4 @@
+import { withApiAuth } from "@/modules/auth";
 import { createCatalogRepository } from "@/modules/catalog";
 import { getDb } from "@/modules/db";
 
@@ -5,22 +6,23 @@ import { getDb } from "@/modules/db";
 // cached forever by the browser and the CDN.
 const IMMUTABLE = "public, max-age=31536000, immutable";
 
-// TODO(10-auth): require a session with requireUserForApi() (401 without one).
-export async function GET(_request: Request, ctx: RouteContext<"/api/tracks/[id]/cover">) {
-  const { id } = await ctx.params;
-  const trackId = Number(id);
-  if (!/^\d+$/.test(id) || !Number.isSafeInteger(trackId) || trackId < 1) {
-    return new Response("Invalid track id", { status: 400 });
-  }
+export const GET = withApiAuth(
+  async (_user, _request: Request, ctx: RouteContext<"/api/tracks/[id]/cover">) => {
+    const { id } = await ctx.params;
+    const trackId = Number(id);
+    if (!/^\d+$/.test(id) || !Number.isSafeInteger(trackId) || trackId < 1) {
+      return new Response("Invalid track id", { status: 400 });
+    }
 
-  const cover = await createCatalogRepository(getDb()).getCover(trackId);
-  if (!cover) return new Response("Cover not found", { status: 404 });
+    const cover = await createCatalogRepository(getDb()).getCover(trackId);
+    if (!cover) return new Response("Cover not found", { status: 404 });
 
-  return new Response(new Uint8Array(cover.data), {
-    headers: {
-      "Content-Type": cover.mime,
-      "Content-Length": String(cover.data.byteLength),
-      "Cache-Control": IMMUTABLE,
-    },
-  });
-}
+    return new Response(new Uint8Array(cover.data), {
+      headers: {
+        "Content-Type": cover.mime,
+        "Content-Length": String(cover.data.byteLength),
+        "Cache-Control": IMMUTABLE,
+      },
+    });
+  },
+);
