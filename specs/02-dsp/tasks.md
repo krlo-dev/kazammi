@@ -4,7 +4,7 @@
   - PRNG con semilla (mulberry32), generador de senoidales e impulsos.
   - Commit: `test(dsp): add seeded signal generators for tests`
 
-- [ ] **T2. DFT de referencia**
+- [x] **T2. DFT de referencia**
   - Cubre: DSP-R2.
   - Verifica: DFT de impulso y de constante.
   - Commit: `feat(dsp): add reference o(n^2) dft`
