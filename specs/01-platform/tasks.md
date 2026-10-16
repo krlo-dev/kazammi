@@ -1,16 +1,16 @@
 # 01 Platform: tareas
 
-- [ ] **T1. Specs iniciales en el repo**
+- [x] **T1. Specs iniciales en el repo**
   - Cubre: todas las specs `00-11`, `CLAUDE.md`, `README.md` mínimo, `.gitignore`.
   - Verifica: los archivos están en `main` y `sources/` **no** aparece en `git status`.
   - Commit: `docs(specs): add initial sdd specs and project roadmap`
 
-- [ ] **T2. Scaffold de Next.js**
+- [x] **T2. Scaffold de Next.js**
   - Cubre: PLT-R1, PLT-R2 (parcial).
   - Verifica: `npm run dev` muestra la página por defecto; `npm run build` pasa.
   - Commit: `chore(platform): scaffold next.js app with typescript strict`
 
-- [ ] **T3. Estructura de módulos**
+- [x] **T3. Estructura de módulos**
   - Cubre: PLT-R3.
   - Crea `src/modules/{dsp,fingerprint,capture,db,auth,catalog,recognition,library}/index.ts`, `src/shared/`, `scripts/ingest/`, `scripts/eval/`.
   - Commit: `chore(platform): add modular monolith folder structure`
