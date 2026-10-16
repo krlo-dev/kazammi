@@ -1,6 +1,6 @@
 # 04 DB y Catalog: tareas
 
-- [ ] **T0. Proyecto en Neon (manual, Krlo)**
+- [x] **T0. Proyecto en Neon (manual, Krlo)**
   - Crear el proyecto `kazammi` en Neon (región cercana a la de Vercel, p. ej. `us-east-1`).
   - Crear la rama `dev` desde `main`. Copiar la cadena *pooled* de `dev` a `.env.local`.
   - Sin commit.
@@ -13,7 +13,7 @@
 - [x] **T2. Esquema del catálogo y migraciones**
   - Cubre: DB-R2, CAT-R1, CAT-R2, CAT-R3, CAT-R8.
   - Verifica: `npm run db:migrate` crea las tablas e índice en la rama `dev`.
-  - Estado: migraciones verificadas en PGlite. Falta correr `npm run db:migrate` contra `dev` cuando exista T0.
+  - Estado: verificado. `npm run db:migrate` aplicado en la rama `dev` (PostgreSQL 18.6): 4 tablas y `fingerprints_hash_idx` con `INCLUDE`. La conexión puede venir de `.env.local` o de `.env`.
   - Commit: `feat(db): add drizzle schema and migrations for neon`
 
 - [x] **T3. Base de pruebas con PGlite**
@@ -35,7 +35,7 @@
   - Commit: `feat(catalog): serve track covers with immutable caching`
   - Nota: la validación de sesión (`requireUserForApi()`) se agrega en `10-auth` T5; la ruta tiene un `TODO(10-auth)`.
 
-- [ ] **T7. Verificación del plan en Neon**
+- [x] **T7. Verificación del plan en Neon**
   - Después de la primera ingesta (`05-ingestion`): `VACUUM ANALYZE` y `EXPLAIN ANALYZE`; anotar el resultado abajo.
   - Sin commit, salvo ajustes.
 
@@ -43,6 +43,6 @@
 
 | Medida | Valor |
 |---|---|
-| Plan de la consulta en Neon | pendiente |
-| Tiempo de la consulta (3.000 hashes) | pendiente |
-| Tamaño de `fingerprints` | pendiente |
+| Plan de la consulta en Neon | `Nested Loop` + `Index Only Scan using fingerprints_hash_idx`, `Heap Fetches: 0` (tras `VACUUM ANALYZE`), 9.932 buffers en caché |
+| Tiempo de la consulta (1.956 hashes, clip de 10 s) | 409 ms en el servidor (~530 ms con red). 787.000 filas unidas: ~400 coincidencias por hash |
+| Tamaño de `fingerprints` | 47,5 MB para 584.673 filas (7 canciones): ~85 B por fila con índice |

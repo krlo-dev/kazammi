@@ -2,8 +2,10 @@ import { existsSync } from "node:fs";
 
 import { defineConfig } from "drizzle-kit";
 
-// drizzle-kit does not read .env.local on its own.
-if (!process.env.DATABASE_URL && existsSync(".env.local")) process.loadEnvFile(".env.local");
+// drizzle-kit does not read env files on its own. Same precedence as Next.js: .env.local, then .env.
+for (const file of [".env.local", ".env"]) {
+  if (!process.env.DATABASE_URL && existsSync(file)) process.loadEnvFile(file);
+}
 
 export default defineConfig({
   dialect: "postgresql",

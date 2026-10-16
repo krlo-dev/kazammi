@@ -41,7 +41,9 @@ npm run ingest -- --dry-run
 npm run ingest -- --reset    # borra fingerprints y los regenera; conserva tracks, Guardadas y playlists
 ```
 
-Parseo con `node:util` `parseArgs`. Ejecutado con `tsx`, cargando `.env.local` con `--env-file`.
+Parseo con `node:util` `parseArgs`. Ejecutado con `tsx`. La CLI carga `.env.local` y después `.env` con `process.loadEnvFile` (misma precedencia que Next.js; el dry run no los necesita). ffmpeg se busca en el `PATH` o en `FFMPEG_PATH`.
+
+Código de salida: `0` sin errores, `2` si algún archivo falló (el resto se indexa igual), `1` si se detuvo (versión distinta, carpeta inexistente).
 
 ## Escritura
 
@@ -53,6 +55,7 @@ Parseo con `node:util` `parseArgs`. Ejecutado con `tsx`, cargando `.env.local` c
 | Archivo | Contenido |
 |---|---|
 | `scripts/ingest/index.ts` | Punto de entrada y CLI |
+| `scripts/ingest/ingest.ts` | `runIngest(options, deps)`: el flujo completo, con dependencias inyectadas para probarlo sobre PGlite |
 | `scripts/ingest/scan.ts` | Listado de archivos y SHA-256 |
 | `scripts/ingest/decode.ts` | ffmpeg -> `Float32Array` |
 | `scripts/ingest/metadata.ts` | Etiquetas, deducción por nombre de archivo, portada |
@@ -61,7 +64,11 @@ Parseo con `node:util` `parseArgs`. Ejecutado con `tsx`, cargando `.env.local` c
 
 ## Dependencias nuevas
 
-`music-metadata`, `sharp`. ffmpeg se instala en el sistema (`winget install ffmpeg` en Windows).
+`music-metadata`, `sharp` (como `devDependencies`: la ingesta nunca corre en el despliegue). ffmpeg se instala en el sistema (`winget install --id Gyan.FFmpeg` en Windows).
+
+## Estimación de tamaño
+
+`filas × 85 B + bytes de portadas`. Los 85 B por fila (con índice) se midieron en Neon tras la primera ingesta y reemplazan los ~72 B de `04-catalog`. Límite: 80% de 1 GB.
 
 ## Ingesta en producción
 

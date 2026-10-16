@@ -84,6 +84,7 @@ LIMIT $3;
 
 - `DISTINCT ON` deja el mejor desfase de cada canción, así el segundo resultado es siempre **otra** canción (necesario para la razón score₁/score₂).
 - **Verificado** en PostgreSQL 16 con 4 M filas y 3.100 hashes de consulta: plan `Nested Loop` + `Index Only Scan using fingerprints_hash_idx`, `Heap Fetches: 0`, ~35 ms; devuelve la canción y el desfase correctos. Tamaño medido: ~72 B por fila con índice.
+- **Medido en Neon** (PostgreSQL 18, rama `dev`, 7 canciones reales): mismo plan con `Heap Fetches: 0`, pero ~85 B por fila y ~410 ms, porque cada hash de la consulta coincide con ~400 filas (ver `tasks.md`, resultados).
 
 ## Inserción de una canción
 
@@ -120,7 +121,13 @@ export interface CatalogRepository {
     anchorFrames: Uint32Array;
     fingerprintVersion: number;
   }): Promise<number>;
-  existsBySha256(sha: string): Promise<boolean>;
+  findTrackIdBySha256(sha: string): Promise<number | null>;   // idempotencia de la ingesta
+  /** --reset de la ingesta: regenera los fingerprints y conserva la fila de tracks. */
+  replaceFingerprints(input: {
+    trackId: number; hashes: Uint32Array; anchorFrames: Uint32Array; fingerprintVersion: number;
+  }): Promise<void>;
+  deleteAllFingerprints(): Promise<void>;                        // TRUNCATE fingerprints
+  vacuumFingerprints(): Promise<void>;                           // VACUUM ANALYZE (fuera de transacción)
   findCandidates(hashes: Uint32Array, times: Uint32Array, limit: number): Promise<Candidate[]>;
   getTracksByIds(ids: number[]): Promise<Track[]>;
   getCover(trackId: number): Promise<{ mime: string; data: Uint8Array } | null>;
