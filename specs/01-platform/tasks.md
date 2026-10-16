@@ -40,6 +40,6 @@
   - Verifica: workflow en verde tras el push.
   - Commit: `ci(platform): add lint, typecheck, test and build workflow`
 
-- [ ] **T9. README**
+- [x] **T9. README**
   - Cubre: PLT-R8.
   - Commit: `docs(platform): add readme with setup instructions`
