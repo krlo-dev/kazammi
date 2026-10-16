@@ -1,6 +1,6 @@
 # 02 DSP: tareas
 
-- [ ] **T1. Helpers de test**
+- [x] **T1. Helpers de test**
   - PRNG con semilla (mulberry32), generador de senoidales e impulsos.
   - Commit: `test(dsp): add seeded signal generators for tests`
 
