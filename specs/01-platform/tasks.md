@@ -30,7 +30,7 @@
   - Verifica: `npm run build` sin `.env.local` termina bien.
   - Commit: `chore(platform): add lazy validated env and env example`
 
-- [ ] **T7. Health endpoint**
+- [x] **T7. Health endpoint**
   - Cubre: PLT-R7.
   - Verifica: `curl localhost:3000/api/health` devuelve `status: "ok"`.
   - Commit: `feat(platform): add health check endpoint`

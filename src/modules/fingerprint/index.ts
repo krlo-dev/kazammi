@@ -1,2 +1,2 @@
 // Public API of the fingerprint module. Import this module only through this file.
-export {};
+export { FINGERPRINT_VERSION } from "./params";
