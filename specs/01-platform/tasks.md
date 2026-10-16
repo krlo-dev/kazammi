@@ -25,7 +25,7 @@
   - Verifica: el import prohibido de prueba falla; se elimina después de comprobarlo.
   - Commit: `chore(platform): enforce module boundaries with eslint`
 
-- [ ] **T6. Variables de entorno**
+- [x] **T6. Variables de entorno**
   - Cubre: PLT-R6, PLT-R9.
   - Verifica: `npm run build` sin `.env.local` termina bien.
   - Commit: `chore(platform): add lazy validated env and env example`
