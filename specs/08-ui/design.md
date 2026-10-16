@@ -13,6 +13,7 @@
 
 ## Restricciones técnicas
 
+- Estilos con Tailwind CSS 4, que viene del scaffold (ver `01-platform/design.md`); los tokens se definen con `@theme` en `src/app/globals.css`.
 - `"use client"` solo donde haga falta (identificar, hoja de playlists, menús); el resto, Server Components.
 - Orbe, cinta iridiscente y visualizaciones con `<canvas>`/CSS y `requestAnimationFrame`, sin re-renders de React por frame.
 - Portadas con `next/image` apuntando a `/api/tracks/[id]/cover`.

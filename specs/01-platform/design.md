@@ -12,7 +12,7 @@ npx create-next-app@latest kazammi-scaffold --ts --app --src-dir --eslint --impo
 # borrar kazammi-scaffold/
 ```
 
-Si se usa Tailwind lo decide la sesión de diseño con Impeccable; el scaffold no impone estilos.
+El scaffold incluye Tailwind CSS 4 (`tailwindcss` y `@tailwindcss/turbopack`) y se mantiene. La sesión de diseño con Impeccable define los tokens y estilos sobre esa base.
 
 ## Dependencias base
 
