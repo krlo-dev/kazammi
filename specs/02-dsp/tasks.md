@@ -14,25 +14,25 @@
   - Verifica: todos los criterios de DSP-R1 y DSP-R3 (comparación con DFT, casos analíticos, Parseval).
   - Commit: `feat(dsp): add iterative radix-2 fft with bit-reversal`
 
-- [ ] **T4. Transformada inversa**
+- [x] **T4. Transformada inversa**
   - Cubre: DSP-R8.
   - Commit: `feat(dsp): add inverse fft`
 
-- [ ] **T5. Ventana de Hann**
+- [x] **T5. Ventana de Hann**
   - Cubre: DSP-R5.
   - Commit: `feat(dsp): add hann window`
 
-- [ ] **T6. STFT y conversiones**
+- [x] **T6. STFT y conversiones**
   - Cubre: DSP-R6, DSP-R7.
   - Verifica: senoidal de 1 kHz con pico en el bin 93; número de frames.
   - Commit: `feat(dsp): add stft and spectrogram helpers`
 
-- [ ] **T7. Benchmark**
+- [x] **T7. Benchmark**
   - Cubre: DSP-R10.
   - Anotar el resultado en este archivo (sirve para el informe).
   - Commit: `perf(dsp): add stft benchmark`
 
-- [ ] **T8. API pública y cobertura**
+- [x] **T8. API pública y cobertura**
   - Cubre: DSP-R9.
   - Verifica: `index.ts` exporta solo lo de `design.md`; cobertura >= 90%.
   - Commit: `refactor(dsp): expose public api through module index`
@@ -42,5 +42,5 @@
 | Medida | Valor |
 |---|---|
 | Error máx. FFT vs DFT (N = 4096) | 5.83e-13 (entrada compleja aleatoria, semilla 4096) |
-| STFT de 10 s (Node) | pendiente |
-| FFT de 1024 puntos (promedio) | pendiente |
+| STFT de 10 s (Node) | 3.96 ms promedio (N = 1024, H = 512; meta < 50 ms) |
+| FFT de 1024 puntos (promedio) | 12.0 µs (~83.700 ops/s) |

@@ -3,6 +3,8 @@ export interface FftPlan {
   readonly size: number;
   /** Transforms in-place. re.length === im.length === size. */
   forward(re: Float64Array, im: Float64Array): void;
+  /** Inverse in-place, includes the 1/N normalization. */
+  inverse(re: Float64Array, im: Float64Array): void;
 }
 
 function isPowerOfTwo(n: number): boolean {
@@ -38,12 +40,16 @@ export function createFftPlan(size: number): FftPlan {
     sinTable[k] = Math.sin(angle);
   }
 
-  function forward(re: Float64Array, im: Float64Array): void {
+  function assertBuffers(re: Float64Array, im: Float64Array): void {
     if (re.length !== size || im.length !== size) {
       throw new RangeError(
         `FFT plan of size ${size} got re.length=${re.length}, im.length=${im.length}`,
       );
     }
+  }
+
+  function forward(re: Float64Array, im: Float64Array): void {
+    assertBuffers(re, im);
 
     // Reorder the input so the butterflies can work in-place.
     for (let i = 0; i < size; i++) {
@@ -79,5 +85,16 @@ export function createFftPlan(size: number): FftPlan {
     }
   }
 
-  return { size, forward };
+  // IFFT(X) = conj(FFT(conj(X))) / N, so the forward butterflies are reused.
+  function inverse(re: Float64Array, im: Float64Array): void {
+    assertBuffers(re, im);
+    for (let i = 0; i < size; i++) im[i] = -im[i];
+    forward(re, im);
+    for (let i = 0; i < size; i++) {
+      re[i] /= size;
+      im[i] = -im[i] / size;
+    }
+  }
+
+  return { size, forward, inverse };
 }

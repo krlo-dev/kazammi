@@ -10,6 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "bench": "vitest bench --run --reporter=verbose",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

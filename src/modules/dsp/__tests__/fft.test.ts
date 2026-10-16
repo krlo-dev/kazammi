@@ -99,3 +99,33 @@ describe("createFftPlan().forward", () => {
     expect(() => plan.forward(new Float64Array(8), new Float64Array(4))).toThrow(RangeError);
   });
 });
+
+describe("createFftPlan().inverse", () => {
+  it.each(SIZES)("recovers x from IFFT(FFT(x)) with error < 1e-12, N = %i", (size) => {
+    const originalRe = randomSignal(size, 3 * size);
+    const originalIm = randomSignal(size, 3 * size + 1);
+    const re = originalRe.slice();
+    const im = originalIm.slice();
+    const plan = createFftPlan(size);
+    plan.forward(re, im);
+    plan.inverse(re, im);
+    for (let i = 0; i < size; i++) {
+      expect(Math.abs(re[i] - originalRe[i])).toBeLessThan(1e-12);
+      expect(Math.abs(im[i] - originalIm[i])).toBeLessThan(1e-12);
+    }
+  });
+
+  it("turns a flat spectrum back into a unit impulse", () => {
+    const re = constant(16, 1);
+    const im = new Float64Array(16);
+    createFftPlan(16).inverse(re, im);
+    expect(Math.abs(re[0] - 1)).toBeLessThan(TOLERANCE);
+    for (let i = 1; i < 16; i++) expect(Math.hypot(re[i], im[i])).toBeLessThan(TOLERANCE);
+  });
+
+  it("rejects mismatched buffers without touching them", () => {
+    const im = Float64Array.from([1, 2, 3, 4]);
+    expect(() => createFftPlan(8).inverse(new Float64Array(8), im)).toThrow(RangeError);
+    expect(Array.from(im)).toEqual([1, 2, 3, 4]);
+  });
+});
