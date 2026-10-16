@@ -33,7 +33,7 @@ Prioridad con MoSCoW: **M** (must), **S** (should), **C** (could), **W** (won't,
 | # | Spec | Contenido | Estado |
 |---|---|---|---|
 | 00 | [foundation](./00-foundation/) | Visión, arquitectura, modelo matemático, convenciones, roadmap | Borrador |
-| 01 | [platform](./01-platform/) | Scaffold Next.js, tooling, CI | Borrador |
+| 01 | [platform](./01-platform/) | Scaffold Next.js, tooling, CI | Hecha |
 | 02 | [dsp](./02-dsp/) | FFT propia, ventanas, STFT | Borrador |
 | 03 | [fingerprint](./03-fingerprint/) | Picos espectrales y hashes combinatorios | Borrador |
 | 04 | [catalog](./04-catalog/) | Módulo `db` (Neon, Drizzle, migraciones) y catálogo de canciones | Borrador |
