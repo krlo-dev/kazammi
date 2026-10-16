@@ -141,7 +141,15 @@ export function createCatalogRepository(db: Database): CatalogRepository;
 | `__tests__/catalog.int.test.ts` | Integración con PGlite |
 | `src/app/api/tracks/[id]/cover/route.ts` | Sirve la portada (exige sesión) |
 
+## Notas de implementación
+
+- `db.execute()` devuelve un arreglo de filas en postgres.js y `{ rows }` en PGlite; `catalog/sql.ts` expone `rowsOf()` para leer ambos.
+- `bytea` se define con `customType` de Drizzle y siempre devuelve `Uint8Array` (postgres.js entrega `Buffer`).
+- `drizzle.config.ts` carga `.env.local` por su cuenta, porque `drizzle-kit` no lo lee. Scripts: `npm run db:generate` y `npm run db:migrate`.
+- ESLint permite importar `@/modules/db/testing` solo desde archivos dentro de `__tests__/`.
+- El `DISTINCT ON` desempata por `delta` y el orden final por `track_id`, para que el resultado sea determinista.
+
 ## Riesgos
 
 - **Hashes muy frecuentes**: algunos hashes aparecen en muchas canciones y generan filas de más. Con un catálogo de decenas de canciones no es un problema; si lo fuera, se excluyen los hashes más comunes.
-- **Arreglos como parámetros**: hay que confirmar en los tests que Drizzle pasa `number[]` como arreglo de Postgres tanto con postgres.js como con PGlite.
+- **Arreglos como parámetros**: resuelto. Los arreglos se envían como un único parámetro de texto con un literal de arreglo (`'{1,2,3}'`) y se convierten en SQL (`::bigint[]`). Funciona igual en postgres.js y en PGlite y cuesta un solo bind aunque haya 45.000 valores (`catalog/sql.ts`).

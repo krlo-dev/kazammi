@@ -24,6 +24,7 @@
 - [ ] **T5. Helpers de sesión**
   - Cubre: AUTH-R9, AUTH-R11.
   - Verifica: tests de `requireUserForApi` (401) y de la validación de `next`.
+  - Incluye: exigir sesión en `GET /api/tracks/[id]/cover` (hoy tiene un `TODO(10-auth)`, ver `04-catalog` T6).
   - Commit: `feat(auth): add server session helpers`
 
 - [ ] **T6. Proxy de rutas**
