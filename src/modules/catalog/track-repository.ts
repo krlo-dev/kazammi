@@ -18,13 +18,14 @@ const trackColumns = {
   hasCover: tracks.hasCover,
 };
 
-export async function existsBySha256(db: Database, sha: string): Promise<boolean> {
+/** Id of the track ingested from a file with this SHA-256, or null if there is none. */
+export async function findTrackIdBySha256(db: Database, sha: string): Promise<number | null> {
   const rows = await db
     .select({ id: tracks.id })
     .from(tracks)
     .where(eq(tracks.contentSha256, sha))
     .limit(1);
-  return rows.length > 0;
+  return rows[0]?.id ?? null;
 }
 
 /** Tracks in the same order as `ids`; unknown ids are skipped. */

@@ -109,8 +109,8 @@ describe("catalog repository (PGlite)", () => {
 
   it("is idempotent by content hash and rolls back a failed insert", async () => {
     await insert(1, sequence(1000, 10));
-    expect(await catalog.existsBySha256("sha-1")).toBe(true);
-    expect(await catalog.existsBySha256("sha-2")).toBe(false);
+    expect(await catalog.findTrackIdBySha256("sha-1")).toBe(1);
+    expect(await catalog.findTrackIdBySha256("sha-2")).toBeNull();
 
     await expect(insert(1, sequence(9000, 10))).rejects.toThrow();
     expect(await db.$count(tracks)).toBe(1);
@@ -171,6 +171,35 @@ describe("catalog repository (PGlite)", () => {
     const stats = await catalog.getStats();
     expect(stats).toMatchObject({ tracks: 2, fingerprints: 42, fingerprintVersion: 2 });
     expect(stats.tableBytes).toBeGreaterThan(0);
+  });
+
+  it("regenerates the fingerprints of a track and keeps its row", async () => {
+    const a = await insert(1, sequence(1000, 50), true);
+    const b = await insert(2, sequence(2000, 5));
+    await catalog.deleteAllFingerprints();
+    expect(await db.$count(fingerprints)).toBe(0);
+    expect(await db.$count(tracks)).toBe(2);
+
+    await catalog.replaceFingerprints({ trackId: a, ...sequence(7000, 30), fingerprintVersion: 2 });
+    const [row] = await db.select().from(tracks).where(eq(tracks.id, a));
+    expect(row).toMatchObject({ fingerprintVersion: 2, hashCount: 30, hasCover: true });
+    expect(await db.$count(fingerprints, eq(fingerprints.trackId, a))).toBe(30);
+    expect(await db.$count(fingerprints, eq(fingerprints.trackId, b))).toBe(0);
+
+    // Replacing again does not duplicate rows.
+    await catalog.replaceFingerprints({ trackId: a, ...sequence(7000, 10), fingerprintVersion: 2 });
+    expect(await db.$count(fingerprints, eq(fingerprints.trackId, a))).toBe(10);
+    const candidates = await catalog.findCandidates(
+      Uint32Array.from([7000, 7001]),
+      Uint32Array.from([0, 1]),
+      5,
+    );
+    expect(candidates).toEqual([{ trackId: a, delta: 0, count: 2 }]);
+  });
+
+  it("vacuums the fingerprints table", async () => {
+    await insert(1, sequence(1000, 100));
+    await expect(catalog.vacuumFingerprints()).resolves.toBeUndefined();
   });
 
   it("deletes fingerprints and cover in cascade when a track is deleted", async () => {
