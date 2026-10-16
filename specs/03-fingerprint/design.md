@@ -9,7 +9,7 @@ export interface FingerprintParams {
   hopSize: 512;
   bandEdges: readonly number[];   // [1, 10, 20, 40, 80, 160, 512]
   peakAlpha: number;              // 1.0
-  silenceThreshold: number;       // magnitud mínima absoluta
+  silenceThreshold: number;       // 1.0: magnitud mínima absoluta tras normalizar
   targetZone: {
     minDeltaFrames: number;       // 1
     maxDeltaFrames: number;       // 64
@@ -67,6 +67,10 @@ pcm -> normalize (pico a 1.0) -> stft (dsp) -> findPeaks -> buildHashes -> Finge
 5. `hash = ((anchorBin << 23) | (pointBin << 14) | deltaFrames) >>> 0`.
 
 `>>> 0` es obligatorio: los operadores de bits de JavaScript trabajan en int32 con signo y el resultado debe ser uint32.
+
+### Umbral de silencio
+
+`silenceThreshold = 1.0` se aplica a la magnitud del espectrograma de la señal ya normalizada. Una senoidal a escala completa con ventana de Hann y N = 1024 tiene magnitud cercana a N/4 = 256, así que 1.0 queda unos 48 dB por debajo: los pasajes suaves siguen generando picos y el silencio digital no. Se recalibra con audio real en `05-ingestion` (si cambia, sube `FINGERPRINT_VERSION`).
 
 ## Versionado
 
