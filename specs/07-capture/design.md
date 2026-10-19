@@ -101,3 +101,4 @@ La ingesta remuestrea con ffmpeg y el navegador con `OfflineAudioContext`. Los f
 - `useLastRecognition()` expone la última escucha terminada (datos de depuración y match) a otras rutas de la misma pestaña, para `/how-it-works`. Se pierde al recargar.
 - `start()` también funciona desde `matched`, `no_match` y `error`: reinicia y empieza en un solo toque ("Intentar de nuevo", UI-R15).
 - La página temporal `/dev/recognizer` se borró: la reemplaza la pantalla de identificar.
+- **Grabaciones en desarrollo** (pedido por `06-recognition` T10): con `NODE_ENV=development`, el intento final de cada escucha (el que reconoce, o el de 12 s) se envía como PCM a `POST /api/dev/recordings`, que exige sesión y lo guarda como WAV de 11.025 Hz en `data/recordings/` (fuera del repo). En producción la ruta responde 404 y el código del cliente se elimina en el build.

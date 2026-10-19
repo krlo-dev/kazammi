@@ -139,6 +139,23 @@ export function useRecognizer(): {
               `${result.response.status} (score ${result.response.score})`,
           );
         }
+        // Development only: keep the final attempt (it holds all the audio) as a WAV in
+        // data/recordings/, to tune the fingerprint against real rooms.
+        if (
+          process.env.NODE_ENV === "development" &&
+          (result.response.status === "match" || isLast)
+        ) {
+          const params = new URLSearchParams({
+            attempt: String(session.started),
+            status: result.response.status,
+            score: String(result.response.score),
+            title: result.response.status === "match" ? result.response.track.title : "",
+          });
+          void fetch(`/api/dev/recordings?${params}`, {
+            method: "POST",
+            body: result.pcm.slice().buffer,
+          }).catch(() => {});
+        }
         const attemptDebug = toRecognizerDebug(result);
         if (attemptDebug) {
           setDebug(attemptDebug);

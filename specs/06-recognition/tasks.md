@@ -29,6 +29,17 @@
   - Cubre: EVAL-R1, EVAL-R3, EVAL-R4, EVAL-R5.
   - Commit: `feat(eval): add offline recognition accuracy benchmark`
 
+- [x] **T10. Grabaciones reales y umbral τ_abs = 25**
+  - Origen: segunda prueba con micrófono real (2026-10-19, celular a portátil, música desde Spotify). Con `FINGERPRINT_VERSION` 3, solo Touch, One More Time y California se reconocieron, y Ayer salió como Touch (falso positivo).
+  - Herramienta: en desarrollo, cada escucha guarda su intento final como WAV en `data/recordings/` (`POST /api/dev/recordings`, 404 fuera de desarrollo; ver `07-capture`).
+  - Análisis de las 13 grabaciones, contra el catálogo en PGlite:
+    - **Fuente distinta:** El Reloj, El Propio 2 y Ayer coinciden con su archivo al nivel del ruido (score 5 a 12) en todas las variantes del fingerprint (v1, v2, v3, filtro de inicio relajado), y estirar la velocidad entre -4% y +4% tampoco las rescata. El audio de Spotify no es el mismo master que los MP3 de `data/songs/`. Veridis Quo coincide mejor a 0,25% menos de velocidad: otra fuente, cercana. Las de Daft Punk (Touch 71, One More Time 28) y California (28) sí coinciden.
+    - **Falso positivo:** Touch, la canción más larga (8 min, 84.558 hashes), junta más coincidencias al azar. En Ayer ganó con 20 contra 10, razón exactamente 2,0. Ninguna canción equivocada pasó de 20 en las grabaciones reales.
+  - Decisión: τ_abs de 20 a 25. Bloquea el falso positivo y conserva los tres aciertos reales (28 o más). No cambia `FINGERPRINT_VERSION`.
+  - Costo, medido en Neon `dev` (`--durations 4,8,12 --trials 12`): en sala a 10 dB, 25% a 4 s (antes 66,7%), 91,7% a 8 s y 91,7% a 12 s. Sin ruido y con ruido blanco a 10 dB, 100% en las tres duraciones. 0% de respuestas equivocadas y 0 falsos positivos en 50 intentos.
+  - Requisito de uso para V-1: la canción debe sonar desde el mismo archivo que se indexó (los MP3 de `data/songs/` copiados al celular), no desde Spotify o YouTube.
+  - Commit: `fix(recognition): raise the minimum score to 25 against long-track false positives`
+
 - [x] **T9. Condición "sala" en la evaluación**
   - Origen: la prueba con micrófono real del 2026-10-19 falló en 3 de 5 canciones, y el ruido blanco de T6 no lo anticipaba.
   - `scripts/eval/room.ts`: parlante de celular (pasabanda de 250 Hz a 4 kHz), reflexiones a 23, 47 y 89 ms, cola de reverberación y ruido rosa a una SNR exacta. `npm run eval -- --room 15,10,5` (valor por defecto) agrega las columnas "sala".

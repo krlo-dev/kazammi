@@ -118,9 +118,9 @@ describe("POST /api/recognize", () => {
   });
   afterAll(() => close());
 
-  it("recognizes a 10 s segment of an indexed song with its offset", async () => {
+  it("recognizes a 15 s segment of an indexed song with its offset", async () => {
     const start = 12 * SAMPLE_RATE;
-    const segment = song.slice(start, start + 10 * SAMPLE_RATE);
+    const segment = song.slice(start, start + 15 * SAMPLE_RATE);
     const response = await post({
       fingerprintVersion: FINGERPRINT_VERSION,
       hashes: pairsOf(segment),
@@ -158,7 +158,7 @@ describe("POST /api/recognize", () => {
     const session = await getAuth().api.getSession({ headers: state.headers });
     await createLibraryService(state.db as Database).saveTrack(session!.user.id, songId);
 
-    const segment = song.slice(20 * SAMPLE_RATE, 30 * SAMPLE_RATE);
+    const segment = song.slice(20 * SAMPLE_RATE, 35 * SAMPLE_RATE);
     const response = await post({
       fingerprintVersion: FINGERPRINT_VERSION,
       hashes: pairsOf(segment),

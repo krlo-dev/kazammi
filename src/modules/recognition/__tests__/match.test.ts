@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { confidence, decide, DEFAULT_MATCH_PARAMS } from "../match";
 
-const params = DEFAULT_MATCH_PARAMS; // minScore 20, minRatio 2
+const params = DEFAULT_MATCH_PARAMS; // minScore 25, minRatio 2
 const c = (trackId: number, count: number, delta = 100) => ({ trackId, count, delta });
 
 describe("decide", () => {
@@ -25,7 +25,7 @@ describe("decide", () => {
   });
 
   it("accepts a single candidate above the minimum score", () => {
-    expect(decide([c(7, 20)], params)).toMatchObject({
+    expect(decide([c(7, params.minScore)], params)).toMatchObject({
       status: "match",
       trackId: 7,
       runnerUpScore: 0,

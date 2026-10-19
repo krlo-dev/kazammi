@@ -58,7 +58,7 @@ Esquema zod compartido en `src/shared/contracts/recognize.ts`, usado por el rout
 ## Lógica de decisión (`match.ts`, pura)
 
 ```ts
-export interface MatchParams { minScore: number; minRatio: number } // 20, 2
+export interface MatchParams { minScore: number; minRatio: number } // 25, 2 (T10)
 
 export interface MatchDecision {
   status: "match" | "no_match";
@@ -81,7 +81,7 @@ export function decide(candidates: Candidate[], params: MatchParams): MatchDecis
 ```ts
 export function createRecognizer(deps: {
   catalog: CatalogRepository;
-  params?: MatchParams;      // DEFAULT_MATCH_PARAMS = { minScore: 20, minRatio: 2 }
+  params?: MatchParams;      // DEFAULT_MATCH_PARAMS = { minScore: 25, minRatio: 2 }
   now?: () => number;        // reloj inyectable para los tests
 }): (input: ParsedRecognizeRequest) => Promise<RecognitionResult>;
 ```
