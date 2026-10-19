@@ -64,7 +64,7 @@ kazammi/
 3. `db`, `auth` (entrada de servidor), `catalog`, `recognition` y `library` incluyen `import "server-only"`; `capture` incluye `import "client-only"`.
 4. La UI nunca llama a `dsp` o `fingerprint` directamente: consume el hook `useRecognizer()` de `capture`. Excepción: la vista explicativa, que usa los datos de depuración que expone el hook.
 5. **Toda** función de `library` recibe el `userId` desde `requireUser()` en el servidor; nunca desde el cliente.
-6. Las reglas 1 a 3 se verifican con `eslint-plugin-boundaries` en CI.
+6. Las reglas 1 y 2 se verifican con ESLint (`eslint-plugin-boundaries` y `no-restricted-globals`) en CI. La regla 3 la garantizan los paquetes `server-only` y `client-only`, que rompen el build si se importan en el lado equivocado.
 
 ## Flujo de reconocimiento
 

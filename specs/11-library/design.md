@@ -104,3 +104,15 @@ Las páginas `saved`, `playlists` y `playlists/[id]` son Server Components que l
 | `src/modules/library/index.ts` | `createLibraryService` y tipos |
 | `src/modules/library/__tests__/library.int.test.ts` | Criterios de aceptación sobre PGlite |
 | `src/app/(app)/_actions/library.ts` | Server actions |
+
+## Decisiones de implementación
+
+- **Errores de dominio**: `NotFoundError`, `ValidationError` y `LimitError` viven en `src/shared/errors.ts`, junto a `UnauthorizedError`, porque los lanzan los servicios y los traducen las server actions. Los mensajes de `ValidationError` y `LimitError` están en español y se muestran tal cual en la UI.
+- **Reglas compartidas**: `src/shared/contracts/library.ts` define `playlistNameSchema` (trim, 1 a 60 caracteres contados como `char_length`, distinto de "Guardadas" sin distinguir mayúsculas), `trackIdSchema`, `playlistIdSchema` y los límites de LIB-R16. Los usan el servicio, las server actions y los formularios de la UI.
+- **Ids malformados**: un `playlistId` que no es uuid, o un `trackId` que no es entero positivo, responde `not_found` igual que uno inexistente (LIB-R14). Nunca llega a Postgres.
+- **Orden de las playlists**: `listPlaylists` y `playlistsForTrack` ordenan por `updated_at` descendente, y agregar una canción actualiza `updated_at`. La playlist que el usuario acaba de usar queda primera.
+- **Mosaico**: `coverTrackIds` son las primeras 4 canciones con portada, en orden de agregado, para que el mosaico no cambie cada vez que se agrega una canción.
+- **Cursor**: guarda `saved_at` como texto de Postgres, no como `Date`. `saved_at` tiene microsegundos y un `Date` solo milisegundos, así que un cursor con `Date` repetiría filas entre páginas. Los empates en `saved_at` se resuelven por `track_id`.
+- **`createPlaylistAction(name, addTrackId)`**: si la canción no se puede agregar, borra la playlist recién creada. Para el usuario es un solo paso.
+- **Tests y reloj**: PGlite guarda timestamps con resolución de milisegundos, así que los tests que dependen del orden temporal esperan 2 ms entre escrituras. Neon guarda microsegundos.
+- **Lecturas de la hoja "Agregar a playlist"**: se deciden con la UI (`08-ui`), como dice la sección Lecturas.

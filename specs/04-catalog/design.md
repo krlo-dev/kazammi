@@ -84,6 +84,7 @@ LIMIT $3;
 
 - `DISTINCT ON` deja el mejor desfase de cada canción, así el segundo resultado es siempre **otra** canción (necesario para la razón score₁/score₂).
 - **Verificado** en PostgreSQL 16 con 4 M filas y 3.100 hashes de consulta: plan `Nested Loop` + `Index Only Scan using fingerprints_hash_idx`, `Heap Fetches: 0`, ~35 ms; devuelve la canción y el desfase correctos. Tamaño medido: ~72 B por fila con índice.
+- **Medido en Neon** (PostgreSQL 18, rama `dev`, 7 canciones reales): mismo plan con `Heap Fetches: 0`, pero ~85 B por fila y ~410 ms, porque cada hash de la consulta coincide con ~400 filas (ver `tasks.md`, resultados).
 
 ## Inserción de una canción
 
@@ -120,7 +121,13 @@ export interface CatalogRepository {
     anchorFrames: Uint32Array;
     fingerprintVersion: number;
   }): Promise<number>;
-  existsBySha256(sha: string): Promise<boolean>;
+  findTrackIdBySha256(sha: string): Promise<number | null>;   // idempotencia de la ingesta
+  /** --reset de la ingesta: regenera los fingerprints y conserva la fila de tracks. */
+  replaceFingerprints(input: {
+    trackId: number; hashes: Uint32Array; anchorFrames: Uint32Array; fingerprintVersion: number;
+  }): Promise<void>;
+  deleteAllFingerprints(): Promise<void>;                        // TRUNCATE fingerprints
+  vacuumFingerprints(): Promise<void>;                           // VACUUM ANALYZE (fuera de transacción)
   findCandidates(hashes: Uint32Array, times: Uint32Array, limit: number): Promise<Candidate[]>;
   getTracksByIds(ids: number[]): Promise<Track[]>;
   getCover(trackId: number): Promise<{ mime: string; data: Uint8Array } | null>;
@@ -141,7 +148,15 @@ export function createCatalogRepository(db: Database): CatalogRepository;
 | `__tests__/catalog.int.test.ts` | Integración con PGlite |
 | `src/app/api/tracks/[id]/cover/route.ts` | Sirve la portada (exige sesión) |
 
+## Notas de implementación
+
+- `db.execute()` devuelve un arreglo de filas en postgres.js y `{ rows }` en PGlite; `catalog/sql.ts` expone `rowsOf()` para leer ambos.
+- `bytea` se define con `customType` de Drizzle y siempre devuelve `Uint8Array` (postgres.js entrega `Buffer`).
+- `drizzle.config.ts` carga `.env.local` por su cuenta, porque `drizzle-kit` no lo lee. Scripts: `npm run db:generate` y `npm run db:migrate`.
+- ESLint permite importar `@/modules/db/testing` solo desde archivos dentro de `__tests__/`.
+- El `DISTINCT ON` desempata por `delta` y el orden final por `track_id`, para que el resultado sea determinista.
+
 ## Riesgos
 
 - **Hashes muy frecuentes**: algunos hashes aparecen en muchas canciones y generan filas de más. Con un catálogo de decenas de canciones no es un problema; si lo fuera, se excluyen los hashes más comunes.
-- **Arreglos como parámetros**: hay que confirmar en los tests que Drizzle pasa `number[]` como arreglo de Postgres tanto con postgres.js como con PGlite.
+- **Arreglos como parámetros**: resuelto. Los arreglos se envían como un único parámetro de texto con un literal de arreglo (`'{1,2,3}'`) y se convierten en SQL (`::bigint[]`). Funciona igual en postgres.js y en PGlite y cuesta un solo bind aunque haya 45.000 valores (`catalog/sql.ts`).

@@ -33,16 +33,16 @@ Prioridad con MoSCoW: **M** (must), **S** (should), **C** (could), **W** (won't,
 | # | Spec | Contenido | Estado |
 |---|---|---|---|
 | 00 | [foundation](./00-foundation/) | Visión, arquitectura, modelo matemático, convenciones, roadmap | Borrador |
-| 01 | [platform](./01-platform/) | Scaffold Next.js, tooling, CI | Borrador |
-| 02 | [dsp](./02-dsp/) | FFT propia, ventanas, STFT | Borrador |
-| 03 | [fingerprint](./03-fingerprint/) | Picos espectrales y hashes combinatorios | Borrador |
-| 04 | [catalog](./04-catalog/) | Módulo `db` (Neon, Drizzle, migraciones) y catálogo de canciones | Borrador |
-| 05 | [ingestion](./05-ingestion/) | CLI de ingesta de la carpeta de canciones de prueba | Borrador |
-| 06 | [recognition](./06-recognition/) | Matching por histograma de offsets, API y evaluación | Borrador |
+| 01 | [platform](./01-platform/) | Scaffold Next.js, tooling, CI | Hecha |
+| 02 | [dsp](./02-dsp/) | FFT propia, ventanas, STFT | Hecha |
+| 03 | [fingerprint](./03-fingerprint/) | Picos espectrales y hashes combinatorios | Hecha |
+| 04 | [catalog](./04-catalog/) | Módulo `db` (Neon, Drizzle, migraciones) y catálogo de canciones | Hecha |
+| 05 | [ingestion](./05-ingestion/) | CLI de ingesta de la carpeta de canciones de prueba | Hecha |
+| 06 | [recognition](./06-recognition/) | Matching por histograma de offsets, API y evaluación | Hecha |
 | 07 | [capture](./07-capture/) | Micrófono, remuestreo y Web Worker | Borrador |
 | 08 | [ui](./08-ui/) | Pantallas, estados y referencias de diseño (Claude Code + Impeccable) | Borrador |
 | 09 | [deploy](./09-deploy/) | Vercel + Neon | Borrador |
-| 10 | [auth](./10-auth/) | Registro e inicio de sesión con correo y contraseña (bcrypt + Better Auth) | Borrador |
+| 10 | [auth](./10-auth/) | Registro e inicio de sesión con correo y contraseña (bcrypt + Better Auth) | Hecha |
 | 11 | [library](./11-library/) | Guardadas y playlists personalizadas | Borrador |
 
 El orden de implementación no sigue la numeración: ver [`roadmap.md`](./00-foundation/roadmap.md).

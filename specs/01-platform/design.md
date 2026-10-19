@@ -12,7 +12,7 @@ npx create-next-app@latest kazammi-scaffold --ts --app --src-dir --eslint --impo
 # borrar kazammi-scaffold/
 ```
 
-Si se usa Tailwind lo decide la sesión de diseño con Impeccable; el scaffold no impone estilos.
+El scaffold incluye Tailwind CSS 4 (`tailwindcss` y `@tailwindcss/turbopack`) y se mantiene. La sesión de diseño con Impeccable define los tokens y estilos sobre esa base.
 
 ## Dependencias base
 
@@ -30,8 +30,8 @@ Las dependencias de cada fase se agregan en su propia tarea (Drizzle y `postgres
 | Elemento | Patrón | Puede importar |
 |---|---|---|
 | `shared` | `src/shared/**` | nada |
-| `dsp` | `src/modules/dsp/**` | `shared` |
-| `fingerprint` | `src/modules/fingerprint/**` | `dsp`, `shared` |
+| `dsp` | `src/modules/dsp/**` | nada |
+| `fingerprint` | `src/modules/fingerprint/**` | `dsp` |
 | `capture` | `src/modules/capture/**` | `fingerprint`, `dsp`, `shared` |
 | `db` | `src/modules/db/**` | `shared` |
 | `auth` | `src/modules/auth/**` | `db`, `shared` |
@@ -41,7 +41,9 @@ Las dependencias de cada fase se agregan en su propia tarea (Drizzle y `postgres
 | `app` | `src/app/**`, `src/proxy.ts` | todos, solo por su entrada pública |
 | `scripts` | `scripts/**` | `fingerprint`, `catalog`, `db`, `dsp`, `recognition`, `shared` |
 
-Regla `boundaries/entry-point`: solo se permite importar `index.ts` de cada módulo, más `auth/client.ts`.
+Regla `boundaries/dependencies` (v7) con `default: "disallow"`. Hacia los elementos de `src/modules/*` solo se permiten imports cuyo `fileInternalPath` sea `index.ts`, más `client.ts` en `auth`. Dentro de un mismo elemento los imports son libres.
+
+`dsp` y `fingerprint` no pueden importar `react`, `react-dom`, `next`, `server-only`, `client-only` ni módulos de Node (`node:*`, `fs`, `path`, etc.). Además, `no-restricted-globals` prohíbe `window`, `document` y `self` en esos dos módulos.
 
 ## Variables de entorno
 

@@ -39,7 +39,7 @@ Response 200, sin match:
 { "status": "no_match", "score": 7, "timings": { "dbMs": 180, "totalMs": 195 } }
 ```
 
-Errores: `400` (validación), `401` (sin sesión), `409` (versión incompatible), `500` (error interno, sin detalles al cliente).
+Errores: `400` (validación), `401` (sin sesión), `409` (versión incompatible), `500` (error interno, sin detalles al cliente). Cuerpo de error: `{ "error": "invalid_request" | "unauthorized" | "version_mismatch" | "internal_error", "message"?: string }`. Todas las respuestas llevan `Cache-Control: no-store`.
 
 ### Composición en el route handler
 
@@ -58,7 +58,7 @@ Esquema zod compartido en `src/shared/contracts/recognize.ts`, usado por el rout
 ## Lógica de decisión (`match.ts`, pura)
 
 ```ts
-export interface MatchParams { minScore: number; minRatio: number } // 20, 2
+export interface MatchParams { minScore: number; minRatio: number } // 25, 2 (T10)
 
 export interface MatchDecision {
   status: "match" | "no_match";
@@ -79,16 +79,19 @@ export function decide(candidates: Candidate[], params: MatchParams): MatchDecis
 ## Caso de uso (`recognize.ts`)
 
 ```ts
-export async function recognize(
-  input: RecognizeRequest,
-  deps: { catalog: CatalogRepository; params: MatchParams },
-): Promise<RecognizeResponse>;
+export function createRecognizer(deps: {
+  catalog: CatalogRepository;
+  params?: MatchParams;      // DEFAULT_MATCH_PARAMS = { minScore: 25, minRatio: 2 }
+  now?: () => number;        // reloj inyectable para los tests
+}): (input: ParsedRecognizeRequest) => Promise<RecognitionResult>;
 ```
 
+`createRecognizer` guarda en su closure la versión indexada (TTL de 60 s, porque una reingesta puede cambiarla); el route handler mantiene un recognizer por instancia. `RecognitionResult` es la respuesta sin `saved`: `recognition` no conoce usuarios, el campo lo agrega el route handler. Una versión distinta lanza `VersionMismatchError` (409).
+
 1. Validar versión contra `catalog.getStats().fingerprintVersion` (cacheado en memoria del proceso).
-2. `catalog.findCandidates(hashes, 10)`.
+2. `catalog.findCandidates(hashes, times, 10)`.
 3. `decide(candidates, params)`.
-4. Si hay match, `catalog.getTracksByIds([trackId])` y se arma `coverUrl` si `hasCover`.
+4. Si hay match, `catalog.getTracksByIds([trackId])` y se arma `coverUrl` si `hasCover`. Con `debug: true`, en paralelo, `catalog.getOffsetHistogram(trackId, hashes, times, 200)`: los 200 desfases más votados del ganador, ordenados por desfase (método nuevo del catálogo).
 5. Medir tiempos con `performance.now()`.
 
 Las dependencias se inyectan para poder testear el caso de uso con un repositorio falso.
@@ -129,5 +132,14 @@ Salida de ejemplo para el informe:
 | `src/modules/recognition/index.ts` | API pública |
 | `src/shared/contracts/recognize.ts` | Esquemas zod de request y response |
 | `src/app/api/recognize/route.ts` | Route handler delgado (auth + recognize + isSaved) |
-| `scripts/eval/index.ts` | Evaluación offline |
-| `scripts/eval/noise.ts` | Ruido gaussiano y SNR |
+| `scripts/eval/index.ts` | CLI: `npm run eval -- [--durations 3,5,10,15] [--snr inf,20,10,5,0] [--trials 20] [--fp-trials 50] [--seed 42]` |
+| `scripts/eval/eval.ts` | `runEval()`: el bucle de la evaluación, con `recognize` inyectado |
+| `scripts/eval/report.ts` | CSV por consulta y tabla Markdown para el informe |
+| `scripts/eval/noise.ts` | PRNG, Box-Muller, ruido gaussiano a una SNR exacta |
+
+Notas de la evaluación:
+
+- Cada segmento se prueba en todas las SNR (comparación pareada): las diferencias entre columnas se deben al ruido, no a segmentos distintos.
+- El ruido se reescala a su potencia exacta, así la SNR medida coincide con la pedida aunque el segmento sea corto.
+- La canción de cada archivo se busca por SHA-256 (`findTrackIdBySha256`), igual que en la ingesta.
+- Se escriben `reports/eval-<fecha>.csv` (ignorado por git) y `reports/eval-<fecha>.md`.

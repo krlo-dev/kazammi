@@ -1,0 +1,5 @@
+# Keep LF in the working copy on every OS so Prettier and CI agree
+* text=auto eol=lf
+*.ico binary
+*.png binary
+*.webp binary

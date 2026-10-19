@@ -21,6 +21,7 @@ Como desarrollador, quiero un comando que tome la carpeta de canciones de prueba
 | ING-R11 | M | SI la base ya tiene una `fingerprint_version` distinta a la del código, ENTONCES EL SISTEMA DEBE detenerse y pedir `--reset`. `--reset` borra **solo los fingerprints** y los regenera, conservando las filas de `tracks` (identificadas por SHA-256) para no perder las Guardadas ni las playlists de los usuarios. |
 | ING-R12 | S | `--dry-run` DEBE procesar todo sin escribir en la base y mostrar el tamaño estimado. |
 | ING-R13 | M | La ingesta NUNCA DEBE ejecutarse dentro de la app desplegada, y el audio NUNCA DEBE subirse al repositorio. |
+| ING-R14 | M | EL SISTEMA DEBE guardar el año como desconocido (`null`) cuando la etiqueta trae 1970, el año que escriben los editores de tags cuando la fecha estaba vacía. |
 
 ## Criterios de aceptación
 

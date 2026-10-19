@@ -48,9 +48,10 @@ En toda la documentación y mensajes **no se usan rayas largas** (em-dash). Se u
 
 ## Ramas
 
-- `main`: siempre desplegable. Vercel despliega producción desde aquí.
-- Ramas de trabajo: `feat/<módulo>-<tema>`, `fix/<tema>`, `docs/<tema>`, `chore/<tema>`.
-- Cada PR dispara CI y un preview deployment en Vercel.
+- `main`: siempre desplegable. Vercel despliega producción desde aquí. Solo recibe merges desde `develop`.
+- `develop`: rama de integración donde se hace el desarrollo diario.
+- Ramas de trabajo opcionales, creadas desde `develop`: `feat/<módulo>-<tema>`, `fix/<tema>`, `docs/<tema>`, `chore/<tema>`.
+- Cada push y cada PR disparan la CI; cada PR genera un preview deployment en Vercel.
 
 ## Commits: Conventional Commits
 

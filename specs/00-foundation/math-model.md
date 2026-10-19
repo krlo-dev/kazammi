@@ -93,6 +93,7 @@ $$\mathcal{P} = \{(m_i, k_i)\}$$
 2. Tomar el bin de máxima magnitud de cada banda.
 3. Conservar solo los máximos cuya magnitud supere $\alpha \cdot \bar{S}_m$, donde $\bar{S}_m$ es el promedio de los máximos de ese frame y $\alpha$ un coeficiente ajustable (inicial 1,0).
 4. Descartar frames por debajo de un umbral absoluto de energía (silencio).
+5. Inicio de nota: descartar el máximo de la banda $b$ en el frame $m$ si en el frame $m-1$ la misma banda tuvo un pico en un bin a distancia $\le B$ ($B = 1$). Sin este paso, una nota sostenida genera el mismo pico en cada frame y, con él, los mismos hashes repetidos.
 
 Implementa: `fingerprint/peaks.ts`.
 
@@ -114,7 +115,7 @@ $$h = (k_a \ll 23)\ |\ (k_p \ll 14)\ |\ (m_p - m_a)$$
 
 Se almacena la tupla $(h, \text{trackId}, m_a)$. El hash es invariante al instante absoluto: solo depende de frecuencias y de la diferencia de tiempo.
 
-Parámetros iniciales: $\Delta_{min} = 1$, $\Delta_{max} = 64$ frames (~3 s), $K = 128$ bins, $F = 5$.
+Parámetros: $\Delta_{min} = 1$, $\Delta_{max} = 64$ frames (~3 s), $K = 128$ bins, $F = 10$ (desde la versión 3; las versiones 1 y 2 usaban $F = 5$).
 
 Implementa: `fingerprint/hash.ts`. El hash es un entero de 32 bits sin signo; como PostgreSQL no tiene enteros sin signo, la columna es `bigint`.
 
