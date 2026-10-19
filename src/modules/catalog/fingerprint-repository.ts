@@ -88,6 +88,42 @@ export async function replaceFingerprints(db: Database, input: FingerprintReplac
   });
 }
 
+/**
+ * Offset histogram of one track for a query: [delta, count] for its `limit` most voted
+ * offsets, sorted by delta. Feeds the explanatory view (debug mode of recognition).
+ */
+export async function getOffsetHistogram(
+  db: Database,
+  trackId: number,
+  hashes: Uint32Array,
+  times: Uint32Array,
+  limit: number,
+): Promise<[number, number][]> {
+  if (hashes.length !== times.length) {
+    throw new RangeError(
+      `hashes and times must have the same length (${hashes.length} vs ${times.length})`,
+    );
+  }
+  if (hashes.length === 0 || limit <= 0) return [];
+  const rows = rowsOf<{ delta: number; count: number }>(
+    await db.execute(sql`
+      WITH q AS (
+        SELECT * FROM unnest(${toPgArray(hashes)}::bigint[], ${toPgArray(times)}::integer[]) AS q(hash, t)
+      ),
+      top AS (
+        SELECT f.anchor_frame - q.t AS delta, count(*)::int AS count
+        FROM q JOIN fingerprints f ON f.hash = q.hash
+        WHERE f.track_id = ${trackId}
+        GROUP BY delta
+        ORDER BY count DESC, delta
+        LIMIT ${limit}
+      )
+      SELECT delta, count FROM top ORDER BY delta
+    `),
+  );
+  return rows.map((row) => [row.delta, row.count]);
+}
+
 /** Removes every fingerprint and keeps tracks, covers and the users' library. */
 export async function deleteAllFingerprints(db: Database): Promise<void> {
   await db.execute(sql`TRUNCATE fingerprints`);

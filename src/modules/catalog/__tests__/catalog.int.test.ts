@@ -68,6 +68,36 @@ describe("catalog repository (PGlite)", () => {
     expect(new Set(candidates.map((c) => c.trackId)).size).toBe(candidates.length);
   });
 
+  it("returns the offset histogram of one track, top offsets sorted by delta", async () => {
+    const a = await insert(1, sequence(1000, 200));
+    await insert(2, sequence(1000, 200)); // same hashes, other track: must not count
+    // 30 hashes aligned at delta 40, plus 5 scattered at delta 7.
+    const hashes = Uint32Array.from([
+      ...Array.from({ length: 30 }, (_, i) => 1040 + i),
+      1100,
+      1101,
+      1102,
+      1103,
+      1104,
+    ]);
+    const times = Uint32Array.from([
+      ...Array.from({ length: 30 }, (_, i) => i),
+      93,
+      94,
+      95,
+      96,
+      97,
+    ]);
+    expect(await catalog.getOffsetHistogram(a, hashes, times, 10)).toEqual([
+      [7, 5],
+      [40, 30],
+    ]);
+    expect(await catalog.getOffsetHistogram(a, hashes, times, 1)).toEqual([[40, 30]]);
+    expect(await catalog.getOffsetHistogram(a, new Uint32Array(0), new Uint32Array(0), 5)).toEqual(
+      [],
+    );
+  });
+
   it("keeps uint32 hashes above 2^31 intact through bigint", async () => {
     const id = await insert(1, {
       hashes: Uint32Array.from([0xffffffff, 0x80000000, 0]),

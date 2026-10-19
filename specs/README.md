@@ -38,7 +38,7 @@ Prioridad con MoSCoW: **M** (must), **S** (should), **C** (could), **W** (won't,
 | 03 | [fingerprint](./03-fingerprint/) | Picos espectrales y hashes combinatorios | Hecha |
 | 04 | [catalog](./04-catalog/) | Módulo `db` (Neon, Drizzle, migraciones) y catálogo de canciones | Hecha |
 | 05 | [ingestion](./05-ingestion/) | CLI de ingesta de la carpeta de canciones de prueba | Hecha |
-| 06 | [recognition](./06-recognition/) | Matching por histograma de offsets, API y evaluación | Borrador |
+| 06 | [recognition](./06-recognition/) | Matching por histograma de offsets, API y evaluación | Hecha |
 | 07 | [capture](./07-capture/) | Micrófono, remuestreo y Web Worker | Borrador |
 | 08 | [ui](./08-ui/) | Pantallas, estados y referencias de diseño (Claude Code + Impeccable) | Borrador |
 | 09 | [deploy](./09-deploy/) | Vercel + Neon | Borrador |

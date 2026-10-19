@@ -43,5 +43,5 @@
 | `/api/tracks/2/cover` sin sesión / con sesión | 401 / 200 `image/webp` con caché inmutable |
 | `/login` con sesión | Redirige a `/` |
 | Cerrar sesión | 200; la siguiente navegación a `/saved` vuelve a `/login` |
-| `POST /api/recognize` sin cookie: 401 | Pendiente: la ruta llega en `06-recognition` (usará `withApiAuth`) |
+| `POST /api/recognize` sin cookie: 401 | Sí, sin consultar `fingerprints` (test del route handler en `06-recognition`) |
   - Commit: `feat(auth): redirect unauthenticated requests to login`

@@ -4,6 +4,7 @@ import type { Database } from "@/modules/db";
 import {
   deleteAllFingerprints,
   findCandidates,
+  getOffsetHistogram,
   insertTrackWithFingerprints,
   replaceFingerprints,
   vacuumFingerprints,
@@ -29,6 +30,12 @@ export interface CatalogRepository {
   deleteAllFingerprints(): Promise<void>;
   vacuumFingerprints(): Promise<void>;
   findCandidates(hashes: Uint32Array, times: Uint32Array, limit: number): Promise<Candidate[]>;
+  getOffsetHistogram(
+    trackId: number,
+    hashes: Uint32Array,
+    times: Uint32Array,
+    limit: number,
+  ): Promise<[number, number][]>;
   getTracksByIds(ids: number[]): Promise<Track[]>;
   getCover(trackId: number): Promise<Cover | null>;
   getStats(): Promise<CatalogStats>;
@@ -43,6 +50,8 @@ export function createCatalogRepository(db: Database): CatalogRepository {
     deleteAllFingerprints: () => deleteAllFingerprints(db),
     vacuumFingerprints: () => vacuumFingerprints(db),
     findCandidates: (hashes, times, limit) => findCandidates(db, hashes, times, limit),
+    getOffsetHistogram: (trackId, hashes, times, limit) =>
+      getOffsetHistogram(db, trackId, hashes, times, limit),
     getTracksByIds: (ids) => getTracksByIds(db, ids),
     getCover: (trackId) => getCover(db, trackId),
     getStats: () => getStats(db),
