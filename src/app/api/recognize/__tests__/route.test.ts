@@ -5,6 +5,7 @@ import { createCatalogRepository, type CatalogRepository } from "@/modules/catal
 import type { Database } from "@/modules/db";
 import { createTestDb } from "@/modules/db/testing";
 import { fingerprint, FINGERPRINT_VERSION } from "@/modules/fingerprint";
+import { createLibraryService } from "@/modules/library";
 import { recognizeResponseSchema } from "@/shared";
 
 const state = vi.hoisted(() => ({ db: undefined as unknown, headers: new Headers() }));
@@ -151,6 +152,20 @@ describe("POST /api/recognize", () => {
     if (body.status !== "match") throw new Error("expected a match");
     const top = body.debug!.histogram.reduce((a, b) => (b[1] > a[1] ? b : a));
     expect(top[1]).toBe(body.score);
+  });
+
+  it("reports saved: true once the session user saved the track", async () => {
+    const session = await getAuth().api.getSession({ headers: state.headers });
+    await createLibraryService(state.db as Database).saveTrack(session!.user.id, songId);
+
+    const segment = song.slice(20 * SAMPLE_RATE, 30 * SAMPLE_RATE);
+    const response = await post({
+      fingerprintVersion: FINGERPRINT_VERSION,
+      hashes: pairsOf(segment),
+    });
+    const body = recognizeResponseSchema.parse(await response.json());
+    if (body.status !== "match") throw new Error("expected a match");
+    expect(body.saved).toBe(true);
   });
 
   it("answers no_match for audio that is not in the catalog", async () => {

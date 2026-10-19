@@ -1,6 +1,7 @@
 import { withApiAuth } from "@/modules/auth";
 import { createCatalogRepository } from "@/modules/catalog";
 import { getDb } from "@/modules/db";
+import { createLibraryService, type LibraryService } from "@/modules/library";
 import { createRecognizer, VersionMismatchError, type Recognize } from "@/modules/recognition";
 import {
   recognizeRequestSchema,
@@ -18,9 +19,11 @@ const fail = (status: number, body: RecognizeError) =>
 let recognizer: Recognize | undefined;
 const getRecognizer = () =>
   (recognizer ??= createRecognizer({ catalog: createCatalogRepository(getDb()) }));
+let library: LibraryService | undefined;
+const getLibrary = () => (library ??= createLibraryService(getDb()));
 
 // Thin composition: auth (401 before touching the database) + recognize + saved.
-export const POST = withApiAuth(async (_user, request: Request) => {
+export const POST = withApiAuth(async (user, request: Request) => {
   let body: unknown;
   try {
     body = await request.json();
@@ -40,8 +43,10 @@ export const POST = withApiAuth(async (_user, request: Request) => {
     const result = await getRecognizer()(parsed.data);
     const response: RecognizeResponse =
       result.status === "match"
-        ? // TODO(11-library): saved = await library.isSaved(user.id, result.track.id).
-          ({ ...result, saved: false } satisfies MatchResponse)
+        ? ({
+            ...result,
+            saved: await getLibrary().isSaved(user.id, result.track.id),
+          } satisfies MatchResponse)
         : result;
     return Response.json(response, { headers: NO_STORE });
   } catch (error) {
