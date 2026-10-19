@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { Spectrogram } from "@/modules/dsp";
-import { encodeHash } from "@/modules/fingerprint";
+import { DEFAULT_PARAMS, encodeHash } from "@/modules/fingerprint";
 import type { RecognizeResponse } from "@/shared";
 
 import type { AttemptResult } from "../attempts";
@@ -102,7 +102,12 @@ describe("pickHashExample", () => {
       peak(206, 150),
       peak(207, 160),
     ];
-    const example = pickHashExample(peaks);
+    // Fan-out of 5 for a small fixture; the default comes from the fingerprint params.
+    const params = {
+      ...DEFAULT_PARAMS,
+      targetZone: { ...DEFAULT_PARAMS.targetZone, fanOut: 5 },
+    };
+    const example = pickHashExample(peaks, params);
     expect(example?.anchor).toEqual(peak(200, 100, 5));
     expect(example?.zone).toEqual({ fromFrame: 201, toFrame: 264, fromBin: 0, toBin: 228 });
     expect(example?.pairs.map((p) => p.point.bin)).toEqual([110, 120, 130, 140, 150]);

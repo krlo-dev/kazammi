@@ -335,7 +335,7 @@ export function HashExampleView() {
   }
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
-      <Frame label="Un ancla, su zona objetivo y los cinco puntos con los que forma pares" tall>
+      <Frame label="Un ancla, su zona objetivo y los puntos con los que forma pares" tall>
         <canvas ref={ref} aria-hidden className="h-full w-full" />
       </Frame>
       <HashTable example={example} />

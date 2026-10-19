@@ -97,7 +97,7 @@ La ingesta remuestrea con ffmpeg y el navegador con `OfflineAudioContext`. Los f
 
 ### Cambios pedidos por `08-ui` (2026-10-19)
 
-- `RecognizerDebug` suma `hashExample`: el ancla más fuerte con fan-out completo, su zona objetivo y sus cinco hashes, armados igual que `buildHashes` (`pickHashExample`, con test).
+- `RecognizerDebug` suma `hashExample`: el ancla más fuerte con fan-out completo, su zona objetivo y sus hashes, armados igual que `buildHashes` (`pickHashExample`, con test).
 - `useLastRecognition()` expone la última escucha terminada (datos de depuración y match) a otras rutas de la misma pestaña, para `/how-it-works`. Se pierde al recargar.
 - `start()` también funciona desde `matched`, `no_match` y `error`: reinicia y empieza en un solo toque ("Intentar de nuevo", UI-R15).
 - La página temporal `/dev/recognizer` se borró: la reemplaza la pantalla de identificar.

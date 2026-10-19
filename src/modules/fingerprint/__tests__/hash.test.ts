@@ -49,18 +49,20 @@ describe("encodeHash / decodeHash", () => {
 
 describe("buildHashes", () => {
   it("pairs each anchor with up to fanOut later peaks", () => {
+    const fanOut = DEFAULT_PARAMS.targetZone.fanOut;
     const peaks = Array.from({ length: 20 }, (_, i) => peak(i, 50));
     const { hashes, anchorFrames } = buildHashes(peaks, DEFAULT_PARAMS);
-    // Anchors 0..14 get 5 pairs, then 4, 3, 2, 1, 0.
-    expect(hashes).toHaveLength(15 * 5 + 4 + 3 + 2 + 1);
+    // Anchor i pairs with the min(fanOut, 19 - i) peaks after it.
+    const expected = peaks.reduce((sum, _p, i) => sum + Math.min(fanOut, peaks.length - 1 - i), 0);
+    expect(hashes).toHaveLength(expected);
     expect(anchorFrames).toHaveLength(hashes.length);
     const perAnchor = new Map<number, number>();
     for (const frame of anchorFrames) perAnchor.set(frame, (perAnchor.get(frame) ?? 0) + 1);
-    for (const count of perAnchor.values()) expect(count).toBeLessThanOrEqual(5);
-    // The first anchor takes the 5 nearest peaks in time.
-    expect(Array.from(hashes.slice(0, 5), (h) => decodeHash(h).deltaFrames)).toEqual([
-      1, 2, 3, 4, 5,
-    ]);
+    for (const count of perAnchor.values()) expect(count).toBeLessThanOrEqual(fanOut);
+    // The first anchor takes the fanOut nearest peaks in time.
+    expect(Array.from(hashes.slice(0, fanOut), (h) => decodeHash(h).deltaFrames)).toEqual(
+      Array.from({ length: fanOut }, (_, i) => i + 1),
+    );
   });
 
   it("skips peaks in the same frame and outside the frequency band of the zone", () => {

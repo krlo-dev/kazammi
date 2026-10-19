@@ -103,7 +103,7 @@ export default function HowItWorksPage() {
             title="Los hashes"
             text={
               <>
-                Cada pico funciona como ancla <em>a</em> y se empareja con hasta cinco picos de su
+                Cada pico funciona como ancla <em>a</em> y se empareja con hasta diez picos de su
                 zona objetivo, un poco más adelante en el tiempo. Cada par se guarda como un número
                 de 32 bits: la frecuencia del ancla, la del punto y la distancia en frames. Un par
                 es mucho más específico que un pico suelto.

@@ -34,7 +34,9 @@ export const DEFAULT_PARAMS: FingerprintParams = Object.freeze({
     minDeltaFrames: 1,
     maxDeltaFrames: 64,
     maxDeltaBins: 128,
-    fanOut: 5,
+    // 10 pairs per anchor (v3): with onset-only peaks, 5 left too few coincidences after a
+    // phone speaker and a room (specs/03-fingerprint T9, "sala" condition of the eval).
+    fanOut: 10,
   }),
 });
 
@@ -42,4 +44,4 @@ export const DEFAULT_PARAMS: FingerprintParams = Object.freeze({
  * Version of the fingerprint algorithm and its parameters. Any change to
  * DEFAULT_PARAMS or to the algorithm must increment it (see specs/03-fingerprint).
  */
-export const FINGERPRINT_VERSION = 2;
+export const FINGERPRINT_VERSION = 3;

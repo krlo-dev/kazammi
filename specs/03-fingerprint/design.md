@@ -15,7 +15,7 @@ export interface FingerprintParams {
     minDeltaFrames: number;       // 1
     maxDeltaFrames: number;       // 64
     maxDeltaBins: number;         // 128
-    fanOut: number;               // 5
+    fanOut: number;               // 10 (v3)
   };
 }
 
@@ -106,3 +106,4 @@ Costo: solo se recuerdan los picos del frame anterior (6 valores), sigue siendo 
 - **Normalización vs. umbral absoluto**: con normalización de pico, un pico de ruido fuerte (un golpe al micrófono) reduce la escala del resto. Si aparece en las pruebas con micrófono, cambiar a normalización RMS y subir la versión.
 - **Densidad de hashes**: afecta el tamaño de la BD (ver `math-model.md` sección 9). Se ajusta con `peakAlpha` y `fanOut` después de medir en `05-ingestion`.
 - **Menos hashes por consulta (v2)**: la supresión baja la cantidad de hashes y con ella el score de los aciertos. Si la precisión con 3 s o 0 dB cae, se compensa con `fanOut` (otra versión) o con `minScore` en `06-recognition` (no cambia la versión).
+- **Fan-out 10 (v3)**: la prueba con micrófono real mostró que la v2 no aguanta el parlante y la sala. Con la condición "sala" de la evaluación se compararon fan-out 10 y 15, el filtro de inicio de nota relajado o apagado y más picos por banda (ver `tasks.md` T9). Fan-out 10 es la única mejora grande que deja margen contra falsos positivos: la peor canción ajena queda en 11, con el umbral en 20. Fan-out 15 y la combinación con más picos quedaban a 2 puntos o menos del umbral, y la v1 (sin filtro) daba falsos positivos.
