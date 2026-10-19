@@ -16,6 +16,7 @@ describe("fingerprint params", () => {
       bandEdges: [1, 10, 20, 40, 80, 160, 512],
       peakAlpha: 1.0,
       silenceThreshold: 1.0,
+      peakContinuityBins: 1,
       targetZone: { minDeltaFrames: 1, maxDeltaFrames: 64, maxDeltaBins: 128, fanOut: 5 },
     });
   });

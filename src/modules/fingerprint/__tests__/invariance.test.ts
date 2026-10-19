@@ -20,12 +20,12 @@ describe("fingerprint invariances", () => {
     // If this snapshot changes, the algorithm or its params changed: bump FINGERPRINT_VERSION.
     expect({ count: hashes.length, sha256: await sha256(hashes) }).toMatchInlineSnapshot(`
       {
-        "count": 2100,
-        "sha256": "fcfd0f3dca4eac71e16465d48c3f7cd1ba74bd0ba68367cc9174b4aecfa1cedf",
+        "count": 177,
+        "sha256": "4bb992738f807a5d37169ef917bfad12b7c923e26d08b5e91b8b37fd7a7fa977",
       }
     `);
     expect(await sha256(anchorFrames)).toMatchInlineSnapshot(
-      `"6af958f9a81c7aa6393199327f5b54c766c2a2942955d86151ec525492768eb1"`,
+      `"7d2b385a8bec6c0bfa3a1b24da60a058f1151567f495c2ba717710fe10c72295"`,
     );
     expect(fingerprint(melody(10, 42)).hashes).toEqual(hashes);
   });
@@ -39,11 +39,15 @@ describe("fingerprint invariances", () => {
     const original = fingerprint(signal);
     const shifted = fingerprint(delayed);
     // Frames before d straddle the padding and the start of the signal, so they have no
-    // counterpart in the original. From frame d on, both spectrograms are identical.
-    const common = shifted.anchorFrames.findIndex((frame) => frame >= d);
-    expect(shifted.hashes.slice(common)).toEqual(original.hashes);
+    // counterpart in the original. From frame d on, both spectrograms are identical, but
+    // frame d of the delayed signal has a previous frame for the onset check and frame 0 of
+    // the original does not: compare from frame d + 1 (frame 1 of the original).
+    const common = shifted.anchorFrames.findIndex((frame) => frame >= d + 1);
+    const from = original.anchorFrames.findIndex((frame) => frame >= 1);
+    expect(from).toBeGreaterThan(0);
+    expect(shifted.hashes.slice(common)).toEqual(original.hashes.slice(from));
     expect(Array.from(shifted.anchorFrames.slice(common))).toEqual(
-      Array.from(original.anchorFrames, (frame) => frame + d),
+      Array.from(original.anchorFrames.slice(from), (frame) => frame + d),
     );
   });
 
@@ -54,10 +58,13 @@ describe("fingerprint invariances", () => {
 
     const original = new Set(pairsOf(fingerprint(signal)));
     const cutFp = fingerprint(cut);
+    // The first frame of the cut has no previous frame for the onset check, so a note that
+    // was already sounding shows up as an onset there: skip the anchors of that frame.
+    const from = cutFp.anchorFrames.findIndex((frame) => frame >= 1);
     // Re-express the cut fingerprint on the original time axis.
     const realigned = pairsOf({
-      hashes: cutFp.hashes,
-      anchorFrames: cutFp.anchorFrames.map((frame) => frame + d),
+      hashes: cutFp.hashes.slice(from),
+      anchorFrames: cutFp.anchorFrames.slice(from).map((frame) => frame + d),
     });
     const matches = realigned.filter((pair) => original.has(pair)).length;
     expect(realigned.length).toBeGreaterThan(0);

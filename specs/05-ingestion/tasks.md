@@ -37,3 +37,4 @@
 | Tamaño de `fingerprints` | 47,5 MB (584.673 filas, ~85 B por fila). Estimación para 60 canciones: ~430 MB, 42% del plan |
 | Tiempo total de ingesta | 16,8 s (2,8 s del dry run sin red); segunda ejecución: 7 omitidas en 3,1 s |
 | Archivos con error | 0 |
+| Con FINGERPRINT_VERSION 2 (`--reset`, 2026-10-18) | 31.906 hashes por canción en promedio, `fingerprints` de 18,3 MB; 7 regeneradas en 13,2 s. Estimación para 60 canciones: ~160 MB, 16% del plan |

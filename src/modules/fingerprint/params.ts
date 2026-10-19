@@ -8,6 +8,8 @@ export interface FingerprintParams {
   readonly peakAlpha: number;
   /** Minimum absolute magnitude of a peak, after peak normalization of the signal. */
   readonly silenceThreshold: number;
+  /** B: a band peak that follows one of the previous frame within ±B bins is dropped. */
+  readonly peakContinuityBins: number;
   readonly targetZone: {
     readonly minDeltaFrames: number;
     readonly maxDeltaFrames: number;
@@ -25,6 +27,9 @@ export const DEFAULT_PARAMS: FingerprintParams = Object.freeze({
   // A full-scale sine under the Hann window peaks near windowSize / 4 = 256, so 1.0 is
   // about -48 dB below it: quiet passages still produce peaks, digital silence does not.
   silenceThreshold: 1.0,
+  // ±1 bin absorbs the leakage between neighbor bins: a sustained note yields one peak,
+  // the one of its onset, instead of one per frame.
+  peakContinuityBins: 1,
   targetZone: Object.freeze({
     minDeltaFrames: 1,
     maxDeltaFrames: 64,
@@ -37,4 +42,4 @@ export const DEFAULT_PARAMS: FingerprintParams = Object.freeze({
  * Version of the fingerprint algorithm and its parameters. Any change to
  * DEFAULT_PARAMS or to the algorithm must increment it (see specs/03-fingerprint).
  */
-export const FINGERPRINT_VERSION = 1;
+export const FINGERPRINT_VERSION = 2;
