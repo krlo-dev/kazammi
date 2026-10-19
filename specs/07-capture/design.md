@@ -83,3 +83,21 @@ Si un intento sigue en curso cuando llega el siguiente, se espera a que termine 
 ## Diferencia con la ingesta
 
 La ingesta remuestrea con ffmpeg y el navegador con `OfflineAudioContext`. Los filtros no son idénticos, pero los picos espectrales dominantes no cambian. El fingerprint es robusto a esa diferencia por diseño; se comprueba en la prueba con micrófono real (criterio V-1).
+
+## Decisiones de implementación
+
+- **Silencio**: si un intento no produce hashes, cuenta como `no_match` con `score: 0` sin llamar a la API (el contrato exige al menos un hash).
+- **`bestScore`**: es el `score` del último intento. Como los intentos son acumulativos, el último cubre todo el audio.
+- **Micrófono**: se libera apenas arranca el intento de 12 s, sin esperar la respuesta de la API, para que el indicador del sistema se apague antes.
+- **Errores**: `getUserMedia` con `NotAllowedError` o `SecurityError` da `permission_denied`; sin micrófono (`NotFoundError`, `NotReadableError`) da `unsupported`. En la API, 401 da `unauthorized`, 409 da `version_mismatch`, 5xx o fallo de red da `network`, y cualquier otra respuesta da `unknown`.
+- **Depuración**: todos los intentos piden `debug` al worker y a la API; el hook expone el del último intento terminado.
+- **Worker con Turbopack**: `new Worker(new URL("./fingerprint.worker.ts", import.meta.url), { type: "module" })` funciona en `next build`: Turbopack lo carga con su `turbopack-worker` y empaqueta `dsp` y `fingerprint` en el chunk del worker. El cuerpo del worker vive en `worker-protocol.ts` para probarlo en Node con el mismo snapshot de `03-fingerprint`.
+- **Grabación**: el `AudioContext` se crea antes del primer `await` para que iOS Safari lo deje sonar dentro del gesto del usuario. El worklet se conecta al destino a través de una ganancia 0, porque algunos navegadores solo procesan nodos que llegan al destino.
+- **Página temporal**: `/dev/recognizer` (grupo `(app)`, con sesión) muestra el estado en JSON para verificar T2, T3 y T6. Se borra cuando llegue la pantalla de identificar de `08-ui`.
+
+### Cambios pedidos por `08-ui` (2026-10-19)
+
+- `RecognizerDebug` suma `hashExample`: el ancla más fuerte con fan-out completo, su zona objetivo y sus cinco hashes, armados igual que `buildHashes` (`pickHashExample`, con test).
+- `useLastRecognition()` expone la última escucha terminada (datos de depuración y match) a otras rutas de la misma pestaña, para `/how-it-works`. Se pierde al recargar.
+- `start()` también funciona desde `matched`, `no_match` y `error`: reinicia y empieza en un solo toque ("Intentar de nuevo", UI-R15).
+- La página temporal `/dev/recognizer` se borró: la reemplaza la pantalla de identificar.
