@@ -90,22 +90,27 @@ describe("runEval", () => {
   const options = {
     durations: [5, 10],
     snrs: [Infinity, 10],
+    rooms: [10],
     trials: 3,
     falsePositiveTrials: 4,
     seed: 7,
   };
 
-  it("tests every segment at every SNR, then the holdout songs", async () => {
+  it("tests every segment at every SNR and in the room, then the holdout songs", async () => {
     const results = await runEval(indexed, holdout, options, {
       recognize: memoryRecognizer(indexed),
       log: () => {},
     });
     const measured = results.filter((r) => r.kind === "indexed");
-    expect(measured).toHaveLength(2 * 3 * 2);
+    expect(measured).toHaveLength(2 * 3 * 3);
     expect(results.filter((r) => r.kind === "holdout")).toHaveLength(4);
     // The same segment is used across SNRs.
     const first = measured.filter((r) => r.duration === 5 && r.trial === 0);
-    expect(first.map((r) => r.snr)).toEqual([Infinity, 10]);
+    expect(first.map((r) => [r.condition, r.snr])).toEqual([
+      ["white", Infinity],
+      ["white", 10],
+      ["room", 10],
+    ]);
     expect(new Set(first.map((r) => r.startSec)).size).toBe(1);
   });
 
@@ -114,7 +119,9 @@ describe("runEval", () => {
       recognize: memoryRecognizer(indexed),
       log: () => {},
     });
-    for (const r of results.filter((r) => r.kind === "indexed" && r.snr === Infinity)) {
+    for (const r of results.filter(
+      (r) => r.kind === "indexed" && r.condition === "white" && r.snr === Infinity,
+    )) {
       expect(r.hit).toBe(true);
       expect(r.offsetErrorSec).toBeLessThanOrEqual(512 / SAMPLE_RATE);
     }
@@ -140,7 +147,7 @@ describe("runEval", () => {
     );
   });
 
-  it("writes a CSV row per query and a Markdown table per duration and SNR", async () => {
+  it("writes a CSV row per query and a Markdown table per duration and condition", async () => {
     const results = await runEval(indexed, holdout, options, {
       recognize: memoryRecognizer(indexed),
       log: () => {},
@@ -160,7 +167,7 @@ describe("runEval", () => {
       minScore: 20,
       minRatio: 2,
     });
-    expect(md).toContain("| Duración | ∞ dB | 10 dB |");
+    expect(md).toContain("| Duración | ∞ dB | 10 dB | sala 10 dB |");
     expect(md).toMatch(/\| 5 s \| 100\.0% \|/);
     expect(md).toMatch(/\d+ falsos positivos en 4 intentos/);
   });

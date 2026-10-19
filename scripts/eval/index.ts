@@ -1,4 +1,4 @@
-// npm run eval -- [--durations 3,5,10,15] [--snr inf,20,10,5,0] [--trials 20] [--seed 42]
+// npm run eval -- [--durations 3,5,10,15] [--snr inf,20,10,5,0] [--room 15,10,5] [--trials 20] [--seed 42]
 // Offline accuracy benchmark against the database of DATABASE_URL (Neon dev). Writes
 // reports/eval-<date>.csv and reports/eval-<date>.md.
 import { existsSync } from "node:fs";
@@ -64,6 +64,7 @@ async function main(): Promise<number> {
       holdout: { type: "string", default: "data/songs-holdout" },
       durations: { type: "string", default: "3,5,10,15" },
       snr: { type: "string", default: "inf,20,10,5,0" },
+      room: { type: "string", default: "15,10,5" },
       trials: { type: "string", default: "20" },
       "fp-trials": { type: "string", default: "50" },
       seed: { type: "string", default: "42" },
@@ -102,6 +103,7 @@ async function main(): Promise<number> {
   const options = {
     durations: list(values.durations),
     snrs: list(values.snr),
+    rooms: values.room.trim() === "" ? [] : list(values.room),
     trials: Number(values.trials),
     falsePositiveTrials: Number(values["fp-trials"]),
     seed: Number(values.seed),

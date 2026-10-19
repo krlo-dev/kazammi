@@ -2,6 +2,7 @@ import { DEFAULT_PARAMS, fingerprint, FINGERPRINT_VERSION } from "@/modules/fing
 import type { Recognize } from "@/modules/recognition";
 
 import { addNoise, mulberry32 } from "./noise";
+import { applyRoom } from "./room";
 
 const SAMPLE_RATE = DEFAULT_PARAMS.sampleRate;
 const FRAME_SECONDS = DEFAULT_PARAMS.hopSize / SAMPLE_RATE;
@@ -16,7 +17,9 @@ export interface EvalSong {
 export interface EvalOptions {
   durations: number[];
   snrs: number[];
-  /** Segments per duration; each one is tested at every SNR. */
+  /** SNRs of the "room" condition (phone speaker, reflections, reverb, pink noise). */
+  rooms: number[];
+  /** Segments per duration; each one is tested at every SNR and every room SNR. */
   trials: number;
   /** Segments of holdout songs (10 s, no noise) to count false positives. */
   falsePositiveTrials: number;
@@ -27,6 +30,8 @@ export interface TrialResult {
   kind: "indexed" | "holdout";
   duration: number;
   snr: number;
+  /** White Gaussian noise, or the room (applyRoom). */
+  condition: "white" | "room";
   trial: number;
   song: string;
   expectedTrackId: number | null;
@@ -117,21 +122,30 @@ export async function runEval(
 ): Promise<TrialResult[]> {
   const results: TrialResult[] = [];
   const random = mulberry32(options.seed);
-  const total = options.durations.length * options.trials * options.snrs.length;
+  const conditions = [
+    ...options.snrs.map((snr) => ({ condition: "white" as const, snr })),
+    ...options.rooms.map((snr) => ({ condition: "room" as const, snr })),
+  ];
+  const total = options.durations.length * options.trials * conditions.length;
 
   for (const duration of options.durations) {
     for (let trial = 0; trial < options.trials; trial++) {
       const picked = pickSegment(indexed, duration, random);
       if (!picked) break;
       const startSec = picked.start / SAMPLE_RATE;
-      for (const snr of options.snrs) {
-        const noisy = addNoise(picked.segment, snr, mulberry32(random() * 2 ** 32));
+      for (const { condition, snr } of conditions) {
+        const seed = random() * 2 ** 32;
+        const noisy =
+          condition === "white"
+            ? addNoise(picked.segment, snr, mulberry32(seed))
+            : applyRoom(picked.segment, { sampleRate: SAMPLE_RATE, snrDb: snr, seed });
         const answer = await query(deps, noisy);
         const hit = answer.predictedTrackId === picked.song.trackId;
         results.push({
           kind: "indexed",
           duration,
           snr,
+          condition,
           trial,
           song: picked.song.label,
           expectedTrackId: picked.song.trackId,
@@ -160,6 +174,7 @@ export async function runEval(
       kind: "holdout",
       duration: FALSE_POSITIVE_DURATION,
       snr: Infinity,
+      condition: "white",
       trial,
       song: picked.song.label,
       expectedTrackId: null,

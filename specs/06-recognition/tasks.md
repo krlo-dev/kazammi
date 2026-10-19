@@ -29,6 +29,12 @@
   - Cubre: EVAL-R1, EVAL-R3, EVAL-R4, EVAL-R5.
   - Commit: `feat(eval): add offline recognition accuracy benchmark`
 
+- [x] **T9. Condición "sala" en la evaluación**
+  - Origen: la prueba con micrófono real del 2026-10-19 falló en 3 de 5 canciones, y el ruido blanco de T6 no lo anticipaba.
+  - `scripts/eval/room.ts`: parlante de celular (pasabanda de 250 Hz a 4 kHz), reflexiones a 23, 47 y 89 ms, cola de reverberación y ruido rosa a una SNR exacta. `npm run eval -- --room 15,10,5` (valor por defecto) agrega las columnas "sala".
+  - Resultado con FINGERPRINT_VERSION 3 (`npm run eval -- --durations 4,8,12 --trials 12 --snr inf,10,5`, reporte en `reports/eval-2026-10-19-v3.md`): 4 s en sala a 10 dB, 66,7%; 8 s, 100%; 12 s, 100%. 0% de respuestas equivocadas en todas las celdas y 0 falsos positivos en 50 intentos. Consulta en Neon `dev`: p95 de 388 a 428 ms.
+  - Commit: `test(eval): add a phone speaker and room condition`
+
 - [x] **T8. Primera evaluación y ajuste de umbrales**
   - Ejecutar, anotar resultados abajo y ajustar `minScore`/`minRatio` si hay falsos positivos.
   - Commit: `docs(recognition): record offline eval results for fingerprint v2` (los umbrales no cambiaron)

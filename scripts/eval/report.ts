@@ -4,6 +4,14 @@ import { FRAME_SECONDS } from "./eval";
 
 export const snrLabel = (snr: number) => (snr === Infinity ? "∞ dB" : `${snr} dB`);
 
+/** Column of the accuracy tables: white noise at an SNR, or the room at an SNR. */
+interface Column {
+  condition: TrialResult["condition"];
+  snr: number;
+}
+const columnLabel = ({ condition, snr }: Column) =>
+  condition === "room" ? `sala ${snrLabel(snr)}` : snrLabel(snr);
+
 const percent = (part: number, total: number) =>
   total === 0 ? "n/a" : `${((100 * part) / total).toFixed(1)}%`;
 
@@ -30,6 +38,7 @@ const CSV_COLUMNS: (keyof TrialResult)[] = [
   "queryHashes",
   "dbMs",
   "totalMs",
+  "condition",
 ];
 
 const csvCell = (value: unknown) => {
@@ -61,25 +70,32 @@ export function toMarkdown(results: TrialResult[], meta: EvalMeta): string {
   const indexed = results.filter((r) => r.kind === "indexed");
   const holdout = results.filter((r) => r.kind === "holdout");
   const durations = [...new Set(indexed.map((r) => r.duration))].sort((a, b) => a - b);
-  const snrs = [...new Set(indexed.map((r) => r.snr))].sort((a, b) => b - a);
-  const cell = (d: number, s: number) => indexed.filter((r) => r.duration === d && r.snr === s);
+  const columnsOf = (condition: Column["condition"]) =>
+    [...new Set(indexed.filter((r) => r.condition === condition).map((r) => r.snr))]
+      .sort((a, b) => b - a)
+      .map((snr) => ({ condition, snr }));
+  const columns = [...columnsOf("white"), ...columnsOf("room")];
+  const cell = (d: number, c: Column) =>
+    indexed.filter((r) => r.duration === d && r.snr === c.snr && r.condition === c.condition);
 
   const lines: string[] = [
     `## Evaluación offline (${meta.date})`,
     "",
-    `${meta.indexedSongs} canciones indexadas, ${meta.trials} segmentos por duración (cada uno probado en todas las SNR), semilla ${meta.seed}. ` +
+    `${meta.indexedSongs} canciones indexadas, ${meta.trials} segmentos por duración (cada uno probado en todas las condiciones), semilla ${meta.seed}. ` +
       `FINGERPRINT_VERSION ${meta.fingerprintVersion}, umbrales τ_abs = ${meta.minScore} y ρ = ${meta.minRatio}.`,
     "",
     "### Precisión (canción correcta)",
     "",
-    `| Duración | ${snrs.map(snrLabel).join(" | ")} |`,
-    `|---|${snrs.map(() => "---").join("|")}|`,
+    "Ruido blanco a cada SNR y, en las columnas «sala», parlante de celular, reflexiones, reverberación y ruido rosa (`scripts/eval/room.ts`).",
+    "",
+    `| Duración | ${columns.map(columnLabel).join(" | ")} |`,
+    `|---|${columns.map(() => "---").join("|")}|`,
   ];
   for (const d of durations) {
     lines.push(
-      `| ${d} s | ${snrs
-        .map((s) => {
-          const c = cell(d, s);
+      `| ${d} s | ${columns
+        .map((col) => {
+          const c = cell(d, col);
           return percent(c.filter((r) => r.hit).length, c.length);
         })
         .join(" | ")} |`,
@@ -90,14 +106,14 @@ export function toMarkdown(results: TrialResult[], meta: EvalMeta): string {
     "",
     "### Respuestas incorrectas (otra canción)",
     "",
-    `| Duración | ${snrs.map(snrLabel).join(" | ")} |`,
-    `|---|${snrs.map(() => "---").join("|")}|`,
+    `| Duración | ${columns.map(columnLabel).join(" | ")} |`,
+    `|---|${columns.map(() => "---").join("|")}|`,
   );
   for (const d of durations) {
     lines.push(
-      `| ${d} s | ${snrs
-        .map((s) => {
-          const c = cell(d, s);
+      `| ${d} s | ${columns
+        .map((col) => {
+          const c = cell(d, col);
           return percent(c.filter((r) => !r.hit && r.predictedTrackId !== null).length, c.length);
         })
         .join(" | ")} |`,
