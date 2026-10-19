@@ -6,6 +6,18 @@ import sharp from "sharp";
 export const COVER_SIZE = 512;
 export const COVER_MIME = "image/webp";
 
+/**
+ * 1970 is the Unix epoch's year: tag editors and download tools write it when a date was
+ * empty or zero. Every song in data/songs came with it, so it means "unknown" (ING-R14).
+ */
+const PLACEHOLDER_YEARS = new Set([1970]);
+
+/** Tag year -> catalog year: an integer that is not a placeholder, or null. */
+export function cleanYear(year: number | undefined): number | null {
+  if (!year || !Number.isInteger(year) || PLACEHOLDER_YEARS.has(year)) return null;
+  return year;
+}
+
 export class MetadataError extends Error {
   override name = "MetadataError";
 }
@@ -53,7 +65,7 @@ export async function readMetadata(file: string): Promise<TrackMetadata> {
       "no title/artist in the tags and the file name is not 'Artista - Título'",
     );
   }
-  const year = common.year && Number.isInteger(common.year) ? common.year : null;
+  const year = cleanYear(common.year);
   return {
     title,
     artist,

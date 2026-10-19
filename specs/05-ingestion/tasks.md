@@ -28,6 +28,12 @@
   - Commit (si hubo ajuste): `perf(fingerprint): tune peak density for catalog size`
   - Estado: sin ajuste. El tamaño cabe de sobra; la densidad de hashes afecta el tiempo de la consulta (ver resultados) y se decide en `06-recognition`.
 
+- [x] **T7. Año 1970 como desconocido**
+  - Cubre: ING-R14.
+  - Origen: revisión de `08-ui` (2026-10-19). Las 7 canciones de `data/songs/` traen `TYER=1970` en sus etiquetas ID3, y el resultado mostraba "Discovery · 1970" (Discovery es de 2001). Decisión de Krlo: la ingesta lo ignora.
+  - Verifica: tests de `cleanYear`. Como `--reset` conserva las filas de `tracks`, en `dev` se aplicó la misma regla una vez con `UPDATE tracks SET year = NULL WHERE year = 1970` (7 filas). `main` se ingiere con la regla desde el inicio.
+  - Commit: `fix(ingest): treat the 1970 placeholder year as unknown`
+
 ## Resultados medidos
 
 | Medida | Valor |

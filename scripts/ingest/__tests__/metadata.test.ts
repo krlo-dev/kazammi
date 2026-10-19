@@ -3,7 +3,7 @@ import path from "node:path";
 import sharp from "sharp";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { MetadataError, normalizeCover, parseFilename, readMetadata } from "../metadata";
+import { cleanYear, MetadataError, normalizeCover, parseFilename, readMetadata } from "../metadata";
 import { sineWav, tempDir, writeFiles } from "./fixtures";
 
 describe("parseFilename", () => {
@@ -21,6 +21,21 @@ describe("parseFilename", () => {
       expect(parseFilename(file)).toBeNull();
     },
   );
+});
+
+describe("cleanYear", () => {
+  it("keeps a real year", () => {
+    expect(cleanYear(2001)).toBe(2001);
+  });
+
+  it.each([
+    ["missing", undefined],
+    ["zero", 0],
+    ["not an integer", 2001.5],
+    ["the 1970 placeholder of empty dates", 1970],
+  ])("drops a year that is %s", (_case, year) => {
+    expect(cleanYear(year)).toBeNull();
+  });
 });
 
 describe("readMetadata", () => {
