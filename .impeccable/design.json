@@ -1,0 +1,477 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-19T16:33:02.556Z",
+  "title": "Design System: Kazammi",
+  "extensions": {
+    "colorMeta": {
+      "ink-0": {
+        "role": "neutral",
+        "displayName": "Tinta de medianoche",
+        "canonical": "oklch(12.2% 0.009 268.1)",
+        "tonalRamp": [
+          "oklch(15% 0.009 268.1)",
+          "oklch(26% 0.009 268.1)",
+          "oklch(37% 0.009 268.1)",
+          "oklch(48% 0.009 268.1)",
+          "oklch(59% 0.009 268.1)",
+          "oklch(70% 0.009 268.1)",
+          "oklch(82% 0.009 268.1)",
+          "oklch(95% 0.009 268.1)"
+        ]
+      },
+      "ink-1": {
+        "role": "neutral",
+        "displayName": "Tinta índigo",
+        "canonical": "oklch(15.9% 0.062 283.2)",
+        "tonalRamp": [
+          "oklch(15% 0.062 283.2)",
+          "oklch(26% 0.062 283.2)",
+          "oklch(37% 0.062 283.2)",
+          "oklch(48% 0.062 283.2)",
+          "oklch(59% 0.062 283.2)",
+          "oklch(70% 0.062 283.2)",
+          "oklch(82% 0.062 283.2)",
+          "oklch(95% 0.062 283.2)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Índigo profundo",
+        "canonical": "oklch(22.6% 0.094 284.7)",
+        "tonalRamp": [
+          "oklch(15% 0.094 284.7)",
+          "oklch(26% 0.094 284.7)",
+          "oklch(37% 0.094 284.7)",
+          "oklch(48% 0.094 284.7)",
+          "oklch(59% 0.094 284.7)",
+          "oklch(70% 0.094 284.7)",
+          "oklch(82% 0.094 284.7)",
+          "oklch(95% 0.094 284.7)"
+        ]
+      },
+      "horizon": {
+        "role": "neutral",
+        "displayName": "Horizonte",
+        "canonical": "oklch(36.1% 0.172 280.3)",
+        "tonalRamp": [
+          "oklch(15% 0.172 280.3)",
+          "oklch(26% 0.172 280.3)",
+          "oklch(37% 0.172 280.3)",
+          "oklch(48% 0.172 280.3)",
+          "oklch(59% 0.172 280.3)",
+          "oklch(70% 0.172 280.3)",
+          "oklch(82% 0.172 280.3)",
+          "oklch(95% 0.172 280.3)"
+        ]
+      },
+      "teal": {
+        "role": "primary",
+        "displayName": "Teal de señal",
+        "canonical": "oklch(76.8% 0.147 169.9)",
+        "tonalRamp": [
+          "oklch(15% 0.147 169.9)",
+          "oklch(26% 0.147 169.9)",
+          "oklch(37% 0.147 169.9)",
+          "oklch(48% 0.147 169.9)",
+          "oklch(59% 0.147 169.9)",
+          "oklch(70% 0.147 169.9)",
+          "oklch(82% 0.147 169.9)",
+          "oklch(95% 0.147 169.9)"
+        ]
+      },
+      "violet": {
+        "role": "secondary",
+        "displayName": "Violeta de horizonte",
+        "canonical": "oklch(44.6% 0.168 296.5)",
+        "tonalRamp": [
+          "oklch(15% 0.168 296.5)",
+          "oklch(26% 0.168 296.5)",
+          "oklch(37% 0.168 296.5)",
+          "oklch(48% 0.168 296.5)",
+          "oklch(59% 0.168 296.5)",
+          "oklch(70% 0.168 296.5)",
+          "oklch(82% 0.168 296.5)",
+          "oklch(95% 0.168 296.5)"
+        ]
+      },
+      "magenta": {
+        "role": "tertiary",
+        "displayName": "Magenta eléctrico",
+        "canonical": "oklch(63.6% 0.274 311.7)",
+        "tonalRamp": [
+          "oklch(15% 0.200 311.7)",
+          "oklch(26% 0.200 311.7)",
+          "oklch(37% 0.200 311.7)",
+          "oklch(48% 0.200 311.7)",
+          "oklch(59% 0.200 311.7)",
+          "oklch(70% 0.200 311.7)",
+          "oklch(82% 0.200 311.7)",
+          "oklch(95% 0.200 311.7)"
+        ]
+      },
+      "fg": {
+        "role": "neutral",
+        "displayName": "Blanco",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(59% 0.000 89.9)",
+          "oklch(70% 0.000 89.9)",
+          "oklch(82% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "fg-2": {
+        "role": "neutral",
+        "displayName": "Lavanda",
+        "canonical": "oklch(78.7% 0.057 290.8)",
+        "tonalRamp": [
+          "oklch(15% 0.057 290.8)",
+          "oklch(26% 0.057 290.8)",
+          "oklch(37% 0.057 290.8)",
+          "oklch(48% 0.057 290.8)",
+          "oklch(59% 0.057 290.8)",
+          "oklch(70% 0.057 290.8)",
+          "oklch(82% 0.057 290.8)",
+          "oklch(95% 0.057 290.8)"
+        ]
+      },
+      "fg-3": {
+        "role": "neutral",
+        "displayName": "Lavanda tenue",
+        "canonical": "oklch(68.8% 0.067 290.5)",
+        "tonalRamp": [
+          "oklch(15% 0.067 290.5)",
+          "oklch(26% 0.067 290.5)",
+          "oklch(37% 0.067 290.5)",
+          "oklch(48% 0.067 290.5)",
+          "oklch(59% 0.067 290.5)",
+          "oklch(70% 0.067 290.5)",
+          "oklch(82% 0.067 290.5)",
+          "oklch(95% 0.067 290.5)"
+        ]
+      },
+      "danger": {
+        "role": "neutral",
+        "displayName": "Coral de error",
+        "canonical": "oklch(76.5% 0.142 12.3)",
+        "tonalRamp": [
+          "oklch(15% 0.142 12.3)",
+          "oklch(26% 0.142 12.3)",
+          "oklch(37% 0.142 12.3)",
+          "oklch(48% 0.142 12.3)",
+          "oklch(59% 0.142 12.3)",
+          "oklch(70% 0.142 12.3)",
+          "oklch(82% 0.142 12.3)",
+          "oklch(95% 0.142 12.3)"
+        ]
+      },
+      "action": {
+        "role": "neutral",
+        "displayName": "Blanco de acción",
+        "canonical": "oklch(96.4% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(59% 0.000 89.9)",
+          "oklch(70% 0.000 89.9)",
+          "oklch(82% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "action-ink": {
+        "role": "neutral",
+        "displayName": "Tinta de acción",
+        "canonical": "oklch(14.9% 0.013 292.4)",
+        "tonalRamp": [
+          "oklch(15% 0.013 292.4)",
+          "oklch(26% 0.013 292.4)",
+          "oklch(37% 0.013 292.4)",
+          "oklch(48% 0.013 292.4)",
+          "oklch(59% 0.013 292.4)",
+          "oklch(70% 0.013 292.4)",
+          "oklch(82% 0.013 292.4)",
+          "oklch(95% 0.013 292.4)"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Gris tarjeta (login)",
+        "canonical": "oklch(21.3% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(59% 0.000 89.9)",
+          "oklch(70% 0.000 89.9)",
+          "oklch(82% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "Gris campo (login)",
+        "canonical": "oklch(25.8% 0.006 301.1)",
+        "tonalRamp": [
+          "oklch(15% 0.006 301.1)",
+          "oklch(26% 0.006 301.1)",
+          "oklch(37% 0.006 301.1)",
+          "oklch(48% 0.006 301.1)",
+          "oklch(59% 0.006 301.1)",
+          "oklch(70% 0.006 301.1)",
+          "oklch(82% 0.006 301.1)",
+          "oklch(95% 0.006 301.1)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Gris apagado (login)",
+        "canonical": "oklch(65.0% 0.014 266.6)",
+        "tonalRamp": [
+          "oklch(15% 0.014 266.6)",
+          "oklch(26% 0.014 266.6)",
+          "oklch(37% 0.014 266.6)",
+          "oklch(48% 0.014 266.6)",
+          "oklch(59% 0.014 266.6)",
+          "oklch(70% 0.014 266.6)",
+          "oklch(82% 0.014 266.6)",
+          "oklch(95% 0.014 266.6)"
+        ]
+      },
+      "glass": {
+        "role": "neutral",
+        "displayName": "Vidrio",
+        "canonical": "rgb(255 255 255 / 0.06)"
+      },
+      "glass-strong": {
+        "role": "neutral",
+        "displayName": "Vidrio fuerte",
+        "canonical": "rgb(255 255 255 / 0.1)"
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Filo",
+        "canonical": "rgb(255 255 255 / 0.1)"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Título de cada pantalla, Geist 300 en dos tonos."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Títulos de los pasos de Cómo funciona."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Títulos de sección como Mis canciones."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto de interfaz."
+      },
+      "body-long": {
+        "displayName": "Body largo",
+        "purpose": "Explicaciones de Cómo funciona, máximo 60 a 62ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Artista, duración, botones compactos y texto auxiliar."
+      }
+    },
+    "shadows": [
+      {
+        "name": "glass-edge",
+        "value": "inset 0 1px 0 rgb(255 255 255 / 0.16), 0 18px 40px -24px rgb(0 0 0 / 0.8)",
+        "purpose": "Toda superficie de vidrio, con backdrop-filter: blur(20px) saturate(140%)."
+      },
+      {
+        "name": "action-glow",
+        "value": "0 10px 24px -14px rgb(255 255 255 / 0.5)",
+        "purpose": "Solo el botón primario."
+      },
+      {
+        "name": "sheet",
+        "value": "inset 0 1px 0 rgb(255 255 255 / 0.1), 0 -24px 60px -20px rgb(52 35 147 / 0.6)",
+        "purpose": "Hojas inferiores, con backdrop-filter: blur(24px) saturate(140%)."
+      },
+      {
+        "name": "cover",
+        "value": "0 30px 60px -24px rgb(0 0 0 / 0.85)",
+        "purpose": "Portada grande del resultado."
+      },
+      {
+        "name": "login-card",
+        "value": "0 40px 80px -30px rgb(0 0 0 / 0.9)",
+        "purpose": "Tarjeta del login."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Entradas: overlay de escucha (420ms), crecimiento del orbe (620ms), hoja (420ms), florecer de la portada (900ms), halo (1200ms), subida de contenido (700ms)."
+      },
+      {
+        "name": "ease-out-quart",
+        "value": "cubic-bezier(0.25, 1, 0.5, 1)",
+        "purpose": "Respuesta táctil de botones, 160ms."
+      },
+      {
+        "name": "resolve",
+        "value": "cubic-bezier(0.5, 0, 0.75, 0) 460ms",
+        "purpose": "El anillo se contrae a 0.42 y se desenfoca antes de que florezca la portada."
+      },
+      {
+        "name": "ambient",
+        "value": "16s y 7s ease-in-out alternate; chispas 5.6s",
+        "purpose": "Cinta del login y chispas del resultado. Todo se detiene con prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "La única acción blanca de la vista: Entrar, Identificar otra, Intentar de nuevo.",
+      "html": "<button class=\"ds-btn-primary\">Identificar otra</button>",
+      "css": ".ds-btn-primary { font-family: var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 3rem; padding-inline: 1.5rem; border: none; border-radius: 0.75rem; background: linear-gradient(180deg, #ffffff 0%, var(--color-action, #f3f3f3) 100%); color: var(--color-action-ink, #0b0a10); font-size: 1rem; font-weight: 600; box-shadow: 0 10px 24px -14px rgb(255 255 255 / 0.5); cursor: pointer; transition: transform 160ms cubic-bezier(0.25, 1, 0.5, 1), opacity 160ms; } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-teal, #1fd1a5); outline-offset: 3px; } .ds-btn-primary:disabled { opacity: 0.6; cursor: progress; }"
+    },
+    {
+      "name": "Pill Button",
+      "kind": "button",
+      "refersTo": "button-pill",
+      "description": "Acción secundaria oscura: Agregar a playlist, Volver, Ver todo.",
+      "html": "<button class=\"ds-btn-pill\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg>Agregar a playlist</button>",
+      "css": ".ds-btn-pill { font-family: var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding-inline: 1.125rem; border-radius: 999px; background: rgb(255 255 255 / 0.08); border: 1px solid var(--color-hairline, rgb(255 255 255 / 0.1)); color: var(--color-fg, #fff); font-size: 1rem; font-weight: 500; cursor: pointer; transition: background 160ms, transform 160ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-btn-pill:hover { background: rgb(255 255 255 / 0.13); } .ds-btn-pill:active { transform: scale(0.97); } .ds-btn-pill:focus-visible { outline: 2px solid var(--color-teal, #1fd1a5); outline-offset: 3px; }"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "button-icon",
+      "description": "Botón circular de 44px: menú, cancelar, volver.",
+      "html": "<button class=\"ds-btn-icon\" aria-label=\"Cancelar\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/></svg></button>",
+      "css": ".ds-btn-icon { display: inline-grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 999px; background: rgb(255 255 255 / 0.08); border: 1px solid var(--color-hairline, rgb(255 255 255 / 0.1)); color: var(--color-fg, #fff); cursor: pointer; transition: background 160ms, transform 160ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-btn-icon:hover { background: rgb(255 255 255 / 0.14); } .ds-btn-icon:active { transform: scale(0.94); } .ds-btn-icon:focus-visible { outline: 2px solid var(--color-teal, #1fd1a5); outline-offset: 3px; }"
+    },
+    {
+      "name": "Login Field",
+      "kind": "input",
+      "refersTo": "login-field",
+      "description": "Campo del login: gris neutro, ícono a la izquierda, borde que aparece al enfocar.",
+      "html": "<label class=\"ds-field\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/><path d=\"m22 7-10 6L2 7\"/></svg><input placeholder=\"Correo\" type=\"email\"></label>",
+      "css": ".ds-field { font-family: var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: flex; align-items: center; gap: 0.75rem; min-height: 3rem; padding-inline: 0.875rem; border-radius: 10px; border: 1px solid transparent; background: var(--color-field, #242326); color: var(--color-muted, #8b8f98); transition: border-color 150ms; } .ds-field:focus-within { border-color: rgb(255 255 255 / 0.3); } .ds-field input { flex: 1; min-width: 0; padding-block: 0.75rem; background: transparent; border: none; outline: none; color: #fff; font: inherit; font-size: 0.9375rem; caret-color: var(--color-teal, #1fd1a5); } .ds-field input::placeholder { color: var(--color-muted, #8b8f98); }"
+    },
+    {
+      "name": "Track Row",
+      "kind": "card",
+      "refersTo": "track-row",
+      "description": "Fila de vidrio con portada, título, artista y duración.",
+      "html": "<div class=\"ds-track-row\"><div class=\"ds-track-cover\"></div><div class=\"ds-track-text\"><p class=\"ds-track-title\">One More Time</p><p class=\"ds-track-artist\">Daft Punk</p></div><span class=\"ds-track-dur\">5:20</span></div>",
+      "css": ".ds-track-row { font-family: var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); background: var(--color-glass, rgb(255 255 255 / 0.06)); border: 1px solid var(--color-hairline, rgb(255 255 255 / 0.1)); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16), 0 18px 40px -24px rgb(0 0 0 / 0.8); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); display: flex; align-items: center; gap: 0.875rem; min-height: 4.5rem; padding: 0.5rem 0.75rem 0.5rem 0.5rem; border-radius: 1.25rem; color: var(--color-fg, #fff); } .ds-track-cover { width: 3.5rem; height: 3.5rem; flex: none; border-radius: 0.875rem; background: radial-gradient(120% 120% at 15% 10%, rgb(31 209 165 / 0.35) 0%, rgb(96 54 164 / 0.55) 45%, #1a1045 100%); } .ds-track-text { flex: 1; min-width: 0; } .ds-track-title { margin: 0; font-weight: 500; } .ds-track-artist, .ds-track-dur { margin: 0; font-size: 0.875rem; color: var(--color-fg-2, #b9b4dc); font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Navigation Menu",
+      "kind": "nav",
+      "refersTo": "menu-item",
+      "description": "Panel de vidrio que abre el botón de menú; la página actual se marca con vidrio fuerte.",
+      "html": "<nav class=\"ds-menu\"><a class=\"ds-menu-item\" aria-current=\"page\" href=\"#\">Identificar</a><a class=\"ds-menu-item\" href=\"#\">Guardadas</a><a class=\"ds-menu-item\" href=\"#\">Mis playlists</a><a class=\"ds-menu-item\" href=\"#\">Cómo funciona</a></nav>",
+      "css": ".ds-menu { font-family: var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); background: var(--color-glass, rgb(255 255 255 / 0.06)); border: 1px solid var(--color-hairline, rgb(255 255 255 / 0.1)); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16), 0 18px 40px -24px rgb(0 0 0 / 0.8); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); background: rgb(11 7 38 / 0.8); display: flex; flex-direction: column; width: 16rem; padding: 0.5rem; border-radius: 1rem; } .ds-menu-item { display: flex; align-items: center; min-height: 3rem; padding-inline: 0.75rem; border-radius: 0.75rem; color: var(--color-fg-2, #b9b4dc); text-decoration: none; transition: background 150ms, color 150ms; } .ds-menu-item:hover, .ds-menu-item[aria-current=\"page\"] { background: var(--color-glass-strong, rgb(255 255 255 / 0.1)); color: var(--color-fg, #fff); } .ds-menu-item:focus-visible { outline: 2px solid var(--color-teal, #1fd1a5); outline-offset: 3px; }"
+    },
+    {
+      "name": "Two-Tone Display Title",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "Título ligero en dos tonos sólidos: blanco y lavanda.",
+      "html": "<h1 class=\"ds-display\">Identificar<br><span>canciones</span></h1>",
+      "css": ".ds-display { font-family: var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); margin: 0; font-size: clamp(2.75rem, 8vw, 5rem); font-weight: 300; letter-spacing: -0.035em; line-height: 0.98; text-wrap: balance; color: var(--color-fg, #fff); } .ds-display span { color: var(--color-fg-2, #b9b4dc); }"
+    },
+    {
+      "name": "Profile Avatar",
+      "kind": "custom",
+      "refersTo": "button-icon",
+      "description": "Iniciales dentro de un anillo cónico teal, violeta y magenta: la luz del orbe en miniatura.",
+      "html": "<button class=\"ds-avatar\" aria-label=\"Perfil\"><span>RK</span></button>",
+      "css": ".ds-avatar { font-family: var(--font-sans, Geist, ui-sans-serif, system-ui, sans-serif); display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 2px; border: none; border-radius: 999px; background: conic-gradient(from 210deg, #1fd1a5, #6036a4, #c03cff, #1fd1a5); cursor: pointer; transition: transform 150ms; } .ds-avatar:active { transform: scale(0.95); } .ds-avatar:focus-visible { outline: 2px solid var(--color-teal, #1fd1a5); outline-offset: 3px; } .ds-avatar span { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 999px; background: var(--color-ink-1, #0b0726); color: #fff; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.025em; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El instrumento de luz",
+    "overview": "Kazammi es un único instrumento que se enciende sobre un campo nocturno: un fondo que baja de negro a índigo, iluminado desde abajo por un horizonte violeta, y un anillo de neón (teal, violeta, magenta) que es la FFT hecha visible. Todo lo demás se aparta para que el anillo y la portada de la canción sean la única fuente de luz. La interfaz no es un panel de control con un botón de micrófono; es el aparato mismo.\n\nLa densidad es baja y la escala es grande porque la demo se proyecta y se usa en el celular con el mismo peso. Los títulos son ligeros (Geist 300) y van en dos tonos: la primera palabra en blanco y el resto en lavanda. Las superficies son vidrio esmerilado con un filo de luz arriba, nunca tarjetas opacas. El login es un mundo hermano: negro puro con una cinta de luz espectral y controles en grises neutros, sin índigo.\n\nEl movimiento tiene una gramática estricta: rotación ambiental lenta en reposo, movimiento guiado por el audio solo mientras escucha, y una sola resolución decisiva (el anillo se contrae y la portada florece). Con `prefers-reduced-motion` todo queda quieto.",
+    "keyCharacteristics": [
+      "Campo oscuro único, solo modo oscuro, con degradado de negro a índigo y horizonte violeta.",
+      "La luz (teal, violeta, magenta) vive en el anillo, el espectro y los gráficos, no en el texto.",
+      "Títulos display ligeros en dos tonos, blanco y lavanda.",
+      "Vidrio esmerilado con filo superior y bordes de 1px casi invisibles.",
+      "Botón primario blanco, acciones secundarias en píldora oscura, botones de ícono circulares.",
+      "Legible al proyectar: texto secundario con al menos 7:1 sobre todo el campo."
+    ],
+    "rules": [
+      {
+        "name": "The Light Is Not Text Rule",
+        "body": "Violeta y magenta nunca se usan como color de texto. El texto es blanco, lavanda o lavanda tenue; el teal solo aparece en foco, cursor y selección.",
+        "section": "colors"
+      },
+      {
+        "name": "The Projector Floor Rule",
+        "body": "El texto secundario no baja de `fg-2` y el terciario no baja de `fg-3`. La lavanda de la referencia (#a49fc4) se subió para proyectar; no se vuelve a bajar.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Worlds Rule",
+        "body": "El índigo es el mundo autenticado; el login es negro puro con grises neutros (`card`, `field`, `muted`). No se mezclan.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Tone Title Rule",
+        "body": "Los títulos display van en dos tonos sólidos: la primera palabra (o primera línea) en `fg` y el resto en `fg-2`. Nunca texto con degradado.",
+        "section": "typography"
+      },
+      {
+        "name": "The Canvas Font Rule",
+        "body": "El texto dentro de un canvas usa `canvasFont()`, que lee la familia de la página una vez (las variables CSS no se resuelven en canvas), con 14px como mínimo para que se lea proyectado.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light Source Rule",
+        "body": "Lo único que emite luz es el anillo, la portada (su halo, con el color promedio de la propia portada) y el botón primario. Ninguna otra superficie brilla.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do poner cada pantalla autenticada sobre el campo índigo fijo: degradado `ink-0`, `ink-1`, `ink-2` con el horizonte desde abajo.",
+      "Do escribir los títulos display en Geist 300 y dos tonos, `fg` y luego `fg-2`.",
+      "Do usar vidrio (`glass` con filo de 1px y desenfoque de 20px) para cada superficie sobre el campo.",
+      "Do mantener un solo botón primario blanco por vista; el resto son píldoras o íconos circulares.",
+      "Do usar `canvasFont()` a 14px o más para cualquier texto en canvas.",
+      "Do dejar todo quieto con `prefers-reduced-motion`: sin rotación, sin chispas, sin animaciones de entrada; solo avanza la pista del orbe.",
+      "Do usar cifras tabulares en duraciones, segundos y porcentajes.",
+      "Do poner los estilos que antes eran CSS modules en `globals.css` con prefijo `kz-`, porque la regla `\"*.css\"` de Turbopack en `next.config.ts` también captura los `*.module.css`."
+    ],
+    "donts": [
+      "Don't usar violeta ni magenta como color de texto.",
+      "Don't bajar el texto secundario de `fg-2` ni el terciario de `fg-3`.",
+      "Don't usar texto con degradado; los dos tonos son colores sólidos.",
+      "Don't llevar el índigo al login ni los grises del login (`card`, `field`, `muted`) a las pantallas autenticadas.",
+      "Don't usar filtros de canvas (`ctx.filter`) para suavizar luz; usa degradados, porque Safari no los respeta.",
+      "Don't agregar un modo claro: el sistema es solo oscuro."
+    ]
+  }
+}

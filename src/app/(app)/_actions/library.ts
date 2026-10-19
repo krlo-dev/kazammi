@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { getLibrary, SAVED_PAGE_SIZE } from "@/app/_lib/library";
+import { toTrackView, type TrackView } from "@/app/_lib/tracks";
 import { requireUser } from "@/modules/auth";
-import { getDb } from "@/modules/db";
-import { createLibraryService, type LibraryService } from "@/modules/library";
 import {
   LimitError,
   NotFoundError,
@@ -20,9 +20,6 @@ export type ActionResult<T = void> =
   | { ok: false; error: "validation" | "not_found" | "limit" | "unknown"; message: string };
 
 const NOT_FOUND = "No encontramos esa playlist o canción.";
-
-let library: LibraryService | undefined;
-const getLibrary = () => (library ??= createLibraryService(getDb()));
 
 /** Pages that show library data: home ("Mis canciones"), saved tracks and playlists. */
 function revalidateLibrary() {
@@ -40,6 +37,7 @@ async function run<A extends unknown[], T>(
   schemas: { [K in keyof A]: z.ZodType<A[K]> },
   args: unknown[],
   action: (userId: string, ...args: A) => Promise<T>,
+  { revalidate = true }: { revalidate?: boolean } = {},
 ): Promise<ActionResult<T>> {
   const user = await requireUser();
 
@@ -57,7 +55,7 @@ async function run<A extends unknown[], T>(
 
   try {
     const data = await action(user.id, ...(parsed as A));
-    revalidateLibrary();
+    if (revalidate) revalidateLibrary();
     return { ok: true, data };
   } catch (error) {
     if (error instanceof ValidationError) {
@@ -134,5 +132,40 @@ export async function removeFromPlaylistAction(
 ): Promise<ActionResult> {
   return run([playlistIdSchema, trackIdSchema], [playlistId, trackId], (userId, id, track) =>
     getLibrary().removeFromPlaylist(userId, id, track),
+  );
+}
+
+/** Reads for the "Agregar a playlist" sheet (LIB-R13). */
+export async function playlistsForTrackAction(
+  trackId: number,
+): Promise<ActionResult<Array<{ id: string; name: string; contains: boolean }>>> {
+  return run(
+    [trackIdSchema],
+    [trackId],
+    (userId, id) => getLibrary().playlistsForTrack(userId, id),
+    { revalidate: false },
+  );
+}
+
+/** Next page of saved tracks, for the incremental list of /saved (LIB-R3). */
+export async function listSavedAction(
+  cursor: string,
+): Promise<
+  ActionResult<{ items: Array<{ track: TrackView; savedAt: string }>; nextCursor: string | null }>
+> {
+  return run(
+    [z.string().min(1).max(200)],
+    [cursor],
+    async (userId, value) => {
+      const page = await getLibrary().listSaved(userId, { limit: SAVED_PAGE_SIZE, cursor: value });
+      return {
+        items: page.items.map((item) => ({
+          track: toTrackView(item.track),
+          savedAt: item.savedAt.toISOString(),
+        })),
+        nextCursor: page.nextCursor,
+      };
+    },
+    { revalidate: false },
   );
 }

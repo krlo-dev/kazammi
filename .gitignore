@@ -60,3 +60,6 @@ yarn-error.log*
 next-env.d.ts
 
 /.kombai/
+
+# impeccable review captures
+/.impeccable/review/

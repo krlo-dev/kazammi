@@ -1,9 +1,15 @@
-// Placeholder home. The identify screen arrives with specs/08-ui.
-export default function Home() {
-  return (
-    <main className="p-4">
-      <h1>Kazammi</h1>
-      <p>Sesión iniciada. La pantalla de identificar llega con la interfaz.</p>
-    </main>
-  );
+import type { Metadata } from "next";
+
+import { IdentifyScreen } from "@/app/_components/identify/IdentifyScreen";
+import { getLibrary } from "@/app/_lib/library";
+import { toTrackView } from "@/app/_lib/tracks";
+import { requireUser } from "@/modules/auth";
+
+export const metadata: Metadata = { title: "Identificar" };
+
+// "Mis canciones" is read on the server (UI-R10); the screen itself is the recognizer.
+export default async function IdentifyPage() {
+  const user = await requireUser();
+  const recent = await getLibrary().recentSaved(user.id);
+  return <IdentifyScreen recent={recent.map((item) => toTrackView(item.track))} />;
 }
