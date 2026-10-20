@@ -29,6 +29,11 @@
   - Cubre: EVAL-R1, EVAL-R3, EVAL-R4, EVAL-R5.
   - Commit: `feat(eval): add offline recognition accuracy benchmark`
 
+- [x] **T12. Evaluación con el fingerprint v5**
+  - Origen: `03-fingerprint` T11 (hop 256 y picos más densos). τ_abs = 15 y ρ = 2 no cambian.
+  - Resultado en Neon `dev` (`--durations 4,8,12 --trials 12 --snr inf,10,5`, reporte en `reports/eval-2026-10-20-v5.md`): 100% en todas las celdas salvo 8 s en sala a 5 dB (91,7%, 11 de 12); 0% de respuestas equivocadas; 0 falsos positivos en 50 intentos; desfase dentro de 1 frame (23 ms) en el 94,9% de los aciertos, mediana de 6,7 ms; p95 de 392 a 425 ms.
+  - Sin commit propio: va con el de `03-fingerprint` T11.
+
 - [x] **T11. Fingerprint v4, desfase ±1 y umbral τ_abs = 15**
   - Origen: con la v3 y τ_abs = 25 la app seguía sin reconocer la mayoría de las canciones desde el celular: 5 de 31 grabaciones de `data/recordings/`.
   - Cambios: picos de máximo local 2D (`03-fingerprint` T10, FINGERPRINT_VERSION 4) y puntaje con los votos de los desfases ±1 (`04-catalog` T8). Con la v4, la peor canción ajena queda en 8 votos (tramos de 10 s en sala) y los aciertos reales en 4 s quedan entre 17 y 122, así que τ_abs baja de 25 a 15. ρ = 2 no cambia.

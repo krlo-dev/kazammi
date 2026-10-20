@@ -1,7 +1,7 @@
 export interface FingerprintParams {
   readonly sampleRate: 11025;
   readonly windowSize: 1024;
-  readonly hopSize: 512;
+  readonly hopSize: 256;
   /** A peak is the largest bin within ±bins and ±frames of itself. */
   readonly neighborhood: { readonly bins: number; readonly frames: number };
   /** Peaks are searched in bins [minBin, maxBin). */
@@ -22,18 +22,21 @@ export interface FingerprintParams {
 export const DEFAULT_PARAMS: FingerprintParams = Object.freeze({
   sampleRate: 11025,
   windowSize: 1024,
-  hopSize: 512,
-  // ±10 bins (108 Hz) and ±5 frames (232 ms): the best match on real phone recordings,
-  // where the onset peaks of v3 did not survive the room (specs/03-fingerprint T10).
-  neighborhood: Object.freeze({ bins: 10, frames: 5 }),
+  // 23 ms per frame (v5): random coincidences spread over twice as many offsets, so the
+  // noise floor of a wrong song halves at the same peak density (specs/03-fingerprint T11).
+  hopSize: 256,
+  // ±6 bins (65 Hz) and ±10 frames (232 ms). The 2D maxima replaced the onset peaks of v3,
+  // which did not survive a phone speaker and a room (specs/03-fingerprint T10 and T11).
+  neighborhood: Object.freeze({ bins: 6, frames: 10 }),
   // 248 Hz to 4 kHz, the band a phone speaker actually plays.
   minBin: 23,
   maxBin: 372,
   peakFloorDb: -70,
-  maxPeaksPerSecond: 20,
+  maxPeaksPerSecond: 30,
   targetZone: Object.freeze({
     minDeltaFrames: 1,
-    maxDeltaFrames: 64,
+    // 128 frames of 23 ms: the same 3 s target zone as 64 frames of 46 ms.
+    maxDeltaFrames: 128,
     maxDeltaBins: 128,
     fanOut: 10,
   }),
@@ -43,4 +46,4 @@ export const DEFAULT_PARAMS: FingerprintParams = Object.freeze({
  * Version of the fingerprint algorithm and its parameters. Any change to
  * DEFAULT_PARAMS or to the algorithm must increment it (see specs/03-fingerprint).
  */
-export const FINGERPRINT_VERSION = 4;
+export const FINGERPRINT_VERSION = 5;

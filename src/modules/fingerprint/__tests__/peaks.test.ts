@@ -8,7 +8,7 @@ import { findPeaks } from "../peaks";
 import { binSines, SAMPLE_RATE, whiteNoise } from "./signals";
 
 const spectrogramOf = (signal: Float32Array): Spectrogram =>
-  stft(signal, SAMPLE_RATE, { windowSize: 1024, hopSize: 512 });
+  stft(signal, SAMPLE_RATE, { windowSize: 1024, hopSize: DEFAULT_PARAMS.hopSize });
 
 /** Hand-written spectrogram, row-major: values[frame * bins + bin]. */
 const tinySpectrogram = (values: number[], bins: number): Spectrogram => ({
@@ -16,7 +16,7 @@ const tinySpectrogram = (values: number[], bins: number): Spectrogram => ({
   bins,
   sampleRate: SAMPLE_RATE,
   windowSize: 1024,
-  hopSize: 512,
+  hopSize: DEFAULT_PARAMS.hopSize,
   data: new Float32Array(values),
 });
 

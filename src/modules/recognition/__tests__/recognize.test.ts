@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import type { CatalogRepository, Candidate, Track } from "@/modules/catalog";
+import { DEFAULT_PARAMS } from "@/modules/fingerprint";
 import { recognizeRequestSchema } from "@/shared";
 
 import { createRecognizer, VersionMismatchError } from "../recognize";
@@ -77,7 +78,7 @@ describe("recognize", () => {
     });
     if (result.status !== "match") throw new Error("expected a match");
     expect(result.track).not.toHaveProperty("hasCover");
-    expect(result.offsetSeconds).toBeCloseTo((268 * 512) / 11025, 10);
+    expect(result.offsetSeconds).toBeCloseTo((268 * DEFAULT_PARAMS.hopSize) / 11025, 10);
     expect(result.confidence).toBeCloseTo(1 - 9 / 156, 10);
     expect(result.timings.totalMs).toBeGreaterThanOrEqual(result.timings.dbMs);
     expect(result).not.toHaveProperty("debug");

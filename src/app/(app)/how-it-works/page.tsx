@@ -61,8 +61,8 @@ export default function HowItWorksPage() {
               <>
                 La transformada de Fourier dice qué frecuencias hay en un trozo de señal. Kazammi la
                 calcula con su propia FFT radix-2 sobre ventanas de 1024 muestras (93 ms) que
-                avanzan de a 512, cada una suavizada con una ventana de Hann. Cada columna es un
-                instante; cada fila, una frecuencia; el color, cuánta energía hay.
+                avanzan de a 256 (23 ms), cada una suavizada con una ventana de Hann. Cada columna
+                es un instante; cada fila, una frecuencia; el color, cuánta energía hay.
               </>
             }
             equation={

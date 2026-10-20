@@ -75,9 +75,9 @@ $$S_{dB}[m, k] = 20 \log_{10}\left(|X[m, k]| + \varepsilon\right)$$
 
 Cada frame $m$ representa $H / f_s$ segundos. Existe un compromiso tiempo-frecuencia (principio de incertidumbre de Gabor): una ventana larga da buena resolución en frecuencia y mala en tiempo, y viceversa.
 
-**Parámetros elegidos**: $N = 1024$, $H = 512$ (50% de solapamiento).
+**Parámetros elegidos**: $N = 1024$, $H = 256$ (75% de solapamiento, desde la versión 5 del fingerprint; antes $H = 512$).
 - $\Delta f = 11025 / 1024 \approx 10{,}77$ Hz por bin.
-- Duración de la ventana $\approx 92{,}9$ ms; duración de un frame $\approx 46{,}4$ ms.
+- Duración de la ventana $\approx 92{,}9$ ms; duración de un frame $\approx 23{,}2$ ms.
 
 Implementa: `dsp/stft.ts`.
 
@@ -89,11 +89,11 @@ $$\mathcal{P} = \{(m_i, k_i)\}$$
 
 **Máximos locales 2D** (v4):
 
-1. Un punto $(m, k)$ es candidato si $|X_m[k]|$ es el máximo de su vecindario $\{(m', k') : |m' - m| \le 5,\ |k' - k| \le 10\}$, es decir ±232 ms y ±108 Hz.
+1. Un punto $(m, k)$ es candidato si $|X_m[k]|$ es el máximo de su vecindario $\{(m', k') : |m' - m| \le 10,\ |k' - k| \le 6\}$, es decir ±232 ms y ±65 Hz.
 2. Solo se buscan picos en $23 \le k < 372$ (248 Hz a 4 kHz), la banda que reproduce el parlante de un celular.
 3. Se descartan los puntos más de 70 dB por debajo del bin más fuerte del espectrograma (silencio).
 4. Empates: si dos valores de un vecindario difieren en menos de $10^{-3}$ relativo, se conserva el primero. Sin este paso, una nota sostenida y constante genera el mismo pico en cada frame y, con él, los mismos hashes repetidos.
-5. Densidad: un pico sobrevive si tiene menos de 20 picos más fuertes a ±0,5 s.
+5. Densidad: un pico sobrevive si tiene menos de 30 picos más fuertes a ±0,5 s.
 
 Implementa: `fingerprint/peaks.ts`.
 
@@ -115,7 +115,7 @@ $$h = (k_a \ll 23)\ |\ (k_p \ll 14)\ |\ (m_p - m_a)$$
 
 Se almacena la tupla $(h, \text{trackId}, m_a)$. El hash es invariante al instante absoluto: solo depende de frecuencias y de la diferencia de tiempo.
 
-Parámetros: $\Delta_{min} = 1$, $\Delta_{max} = 64$ frames (~3 s), $K = 128$ bins, $F = 10$ (desde la versión 3; las versiones 1 y 2 usaban $F = 5$).
+Parámetros: $\Delta_{min} = 1$, $\Delta_{max} = 128$ frames (~3 s con $H = 256$; 64 frames hasta la versión 4), $K = 128$ bins, $F = 10$ (desde la versión 3; las versiones 1 y 2 usaban $F = 5$).
 
 Implementa: `fingerprint/hash.ts`. El hash es un entero de 32 bits sin signo; como PostgreSQL no tiene enteros sin signo, la columna es `bigint`.
 

@@ -109,7 +109,12 @@ describe("pickHashExample", () => {
     };
     const example = pickHashExample(peaks, params);
     expect(example?.anchor).toEqual(peak(200, 100, 5));
-    expect(example?.zone).toEqual({ fromFrame: 201, toFrame: 264, fromBin: 0, toBin: 228 });
+    expect(example?.zone).toEqual({
+      fromFrame: 201,
+      toFrame: 200 + DEFAULT_PARAMS.targetZone.maxDeltaFrames,
+      fromBin: 0,
+      toBin: 228,
+    });
     expect(example?.pairs.map((p) => p.point.bin)).toEqual([110, 120, 130, 140, 150]);
     expect(example?.pairs[0]).toMatchObject({ deltaFrames: 1, hash: encodeHash(100, 110, 1) });
   });

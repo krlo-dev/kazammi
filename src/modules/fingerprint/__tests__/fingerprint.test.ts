@@ -17,7 +17,7 @@ describe("fingerprint", () => {
       expect(pointBin).toBeGreaterThanOrEqual(1);
       expect(pointBin).toBeLessThan(512);
       expect(deltaFrames).toBeGreaterThanOrEqual(1);
-      expect(deltaFrames).toBeLessThanOrEqual(64);
+      expect(deltaFrames).toBeLessThanOrEqual(DEFAULT_PARAMS.targetZone.maxDeltaFrames);
     }
   });
 

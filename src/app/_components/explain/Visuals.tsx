@@ -6,11 +6,13 @@ import { useMemo, type ReactNode } from "react";
 
 import { formatDuration } from "@/app/_lib/tracks";
 import { useLastRecognition, type HashExample, type Spectrogram } from "@/modules/capture";
+import { DEFAULT_PARAMS } from "@/modules/fingerprint";
 
 import { StateMessage } from "../ui/StateMessage";
 import { canvasFont, colormap, INK, useCanvas } from "./use-canvas";
 
 const SAMPLE_RATE = 11025;
+const FRAME_SECONDS = DEFAULT_PARAMS.hopSize / SAMPLE_RATE;
 /** Bins shown on the frequency axis: up to 4 kHz, where music keeps most of its peaks. */
 const MAX_HZ = 4000;
 
@@ -75,7 +77,7 @@ function Frame({
 export function WaveformView() {
   const last = useLastRecognition();
   const waveform = last?.debug.waveform;
-  const seconds = ((last?.debug.spectrogram.frames ?? 0) * 512) / SAMPLE_RATE;
+  const seconds = (last?.debug.spectrogram.frames ?? 0) * FRAME_SECONDS;
   const ref = useCanvas(
     (ctx, w, h) => {
       if (!waveform) return;
@@ -193,7 +195,7 @@ export function SpectrogramView({ withPeaks = false }: { withPeaks?: boolean }) 
 export function PeakCount() {
   const last = useLastRecognition();
   if (!last) return null;
-  const seconds = (last.debug.spectrogram.frames * 512) / SAMPLE_RATE;
+  const seconds = last.debug.spectrogram.frames * FRAME_SECONDS;
   return (
     <span className="tabular-nums">
       {last.debug.peaks.length.toLocaleString("es")} picos en {seconds.toFixed(1).replace(".", ",")}{" "}
@@ -484,7 +486,7 @@ export function HistogramView() {
       ctx.font = canvasFont();
       ctx.fillText(String(top), 6, area.y + 12);
       ctx.fillText("0", 6, area.y + area.h);
-      const toTime = (d: number) => formatDuration((d * 512) / SAMPLE_RATE);
+      const toTime = (d: number) => formatDuration(d * FRAME_SECONDS);
       ctx.fillText(toTime(minD), area.x, h - 6);
       const end = toTime(maxD);
       ctx.fillText(end, area.x + area.w - ctx.measureText(end).width, h - 6);

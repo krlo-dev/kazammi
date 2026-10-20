@@ -12,13 +12,13 @@ describe("fingerprint params", () => {
     expect(DEFAULT_PARAMS).toEqual({
       sampleRate: 11025,
       windowSize: 1024,
-      hopSize: 512,
-      neighborhood: { bins: 10, frames: 5 },
+      hopSize: 256,
+      neighborhood: { bins: 6, frames: 10 },
       minBin: 23,
       maxBin: 372,
       peakFloorDb: -70,
-      maxPeaksPerSecond: 20,
-      targetZone: { minDeltaFrames: 1, maxDeltaFrames: 64, maxDeltaBins: 128, fanOut: 10 },
+      maxPeaksPerSecond: 30,
+      targetZone: { minDeltaFrames: 1, maxDeltaFrames: 128, maxDeltaBins: 128, fanOut: 10 },
     });
   });
 
