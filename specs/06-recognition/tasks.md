@@ -29,6 +29,13 @@
   - Cubre: EVAL-R1, EVAL-R3, EVAL-R4, EVAL-R5.
   - Commit: `feat(eval): add offline recognition accuracy benchmark`
 
+- [x] **T11. Fingerprint v4, desfase ±1 y umbral τ_abs = 15**
+  - Origen: con la v3 y τ_abs = 25 la app seguía sin reconocer la mayoría de las canciones desde el celular: 5 de 31 grabaciones de `data/recordings/`.
+  - Cambios: picos de máximo local 2D (`03-fingerprint` T10, FINGERPRINT_VERSION 4) y puntaje con los votos de los desfases ±1 (`04-catalog` T8). Con la v4, la peor canción ajena queda en 8 votos (tramos de 10 s en sala) y los aciertos reales en 4 s quedan entre 17 y 122, así que τ_abs baja de 25 a 15. ρ = 2 no cambia.
+  - Resultado en Neon `dev` (`--durations 4,8,12 --trials 12 --snr inf,10,5`, reporte en `reports/eval-2026-10-20.md`): 100% en todas las celdas, también en sala a 5 dB con 4 s (antes 25% en sala a 10 dB); 0% de respuestas equivocadas; 0 falsos positivos en 50 intentos; desfase dentro de 1 frame en el 95,4% de los aciertos; p95 de 390 a 429 ms.
+  - Grabaciones reales por la ruta de producción (intentos de 4, 8 y 12 s): 24 de 31 reconocidas, 21 en el primer intento. Las 7 restantes no coinciden con ningún archivo indexado (3 a 6 votos).
+  - Commit: `perf(recognition): lower the minimum score to 15 for fingerprint v4`
+
 - [x] **T10. Grabaciones reales y umbral τ_abs = 25**
   - Origen: segunda prueba con micrófono real (2026-10-19, celular a portátil, música desde Spotify). Con `FINGERPRINT_VERSION` 3, solo Touch, One More Time y California se reconocieron, y Ayer salió como Touch (falso positivo).
   - Herramienta: en desarrollo, cada escucha guarda su intento final como WAV en `data/recordings/` (`POST /api/dev/recordings`, 404 fuera de desarrollo; ver `07-capture`).

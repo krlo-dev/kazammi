@@ -57,6 +57,26 @@
   - Verifica: snapshot de FP-R4 actualizado; `npm run ingest -- --reset` y `npm run eval` en `dev` (resultados en `06-recognition`).
   - Commit: `perf(fingerprint): raise fan-out to 10 to survive speakers and rooms`
 
+- [x] **T10. Máximos locales 2D (FINGERPRINT_VERSION 4)**
+  - Cubre: FP-R2, FP-R10, FP-R5, FP-R6.
+  - Origen: con la v3 la app seguía sin reconocer la mayoría de las canciones desde el celular. De 31 grabaciones reales de `data/recordings/` (2026-10-19 y 2026-10-20), solo 8 tenían un ganador claro. En los pasajes que fallaban, menos de 1 de cada 10 picos de inicio de nota de la grabación coincidía con los del archivo: la reverberación de la sala corre los inicios de nota y el parlante no reproduce las bandas graves ([1, 10) y [10, 20)), así que el umbral relativo de los picos por bandas elegía bandas distintas en la grabación y en el archivo.
+  - Barrido en memoria (7 canciones, las 31 grabaciones con puntaje de desfase ±1; "claro" = razón >= 2 y por encima de la peor canción ajena; sintético: 28 tramos por duración en sala a 5 dB; ajenas: 30 tramos de 10 s de 5 canciones fuera del índice, en sala a 10 dB):
+
+    | Variante | Hashes por canción | Grabaciones claras | Sala 5 dB, 4 s / 8 s | Score máx. de una canción ajena |
+    |---|---|---|---|---|
+    | v3 | 63.484 | 8/31 | 21/28, 27/28 | 15 |
+    | máximo local ±10 bins × ±10 frames | 46.044 | 23/31 | 26/28, 28/28 | 6 |
+    | ±10 × ±3 frames | 63.509 | 24/31 | 28/28, 28/28 | 14 |
+    | **±10 × ±5 frames (elegida)** | 60.652 | 24/31 | 28/28, 28/28 | 8 |
+    | ±5 × ±5 / ±15 × ±5 | 63.681 / 56.326 | 24/31 / 25/31 | 28/28 / 27/28 | 10 / 7 |
+    | flujo espectral (picos de ataque) | 51.895 a 102.809 | 17 a 21/31 | 14 a 22/28 | 5 a 9 |
+    | sin tope de densidad | 87.342 | 24/31 | 27/28, 28/28 | 8 |
+
+  - Decisión: máximo local en ±10 bins × ±5 frames, de 248 Hz a 4 kHz, con piso de -70 dB y tope deslizante de 20 picos por segundo. El tope por bloques fijos de 1 s daba lo mismo, pero dependía del inicio de la señal y rompía FP-R6. Los empates se resuelven con tolerancia de 1e-3 por el primero, para que una nota constante deje un solo pico y el volumen no cambie los hashes (FP-R8).
+  - Resultado en Neon `dev` (con `04-catalog` T8 y `06-recognition` T11): 24 de 31 grabaciones reales reconocidas por la ruta de producción, 21 de ellas en el primer intento de 4 s (con la v3, 5 de 31). Las 7 restantes dan 3 a 6 votos contra todas las canciones: 4 son pasajes de Touch (min 6:30 a 7:05) y 2 son de las 00:56 del 2026-10-20, sin coincidencia con ningún archivo indexado.
+  - Verifica: tests de `findPeaks` reescritos; snapshot de FP-R4 actualizado; `npm run ingest -- --reset` y `npm run eval` en `dev` (resultados en `06-recognition`).
+  - Commit: `perf(fingerprint): pick 2d local-maximum peaks to survive phone speakers and rooms`
+
 ## Resultados medidos
 
 | Medida | Valor |
@@ -67,3 +87,4 @@
 | Tamaño de `fingerprints` (7 canciones) | v1: 47,5 MB. v2: 18,3 MB |
 | Consulta de 15 s en Neon `dev` | v1: 3.781 hashes, p95 2.090 ms. v2: 1.494 hashes, p95 432 ms |
 | v3 (fan-out 10) | 63.484 hashes por canción, `fingerprints` de 36,3 MB (7 canciones). Consulta de 12 s en Neon `dev`: 2.354 hashes, p50 370 ms, p95 428 ms |
+| v4 (máximos locales 2D) | 60.664 hashes por canción, `fingerprints` de 34,6 MB (7 canciones), ingesta de 14,3 s. Consulta de 12 s en Neon `dev`: 2.272 hashes, p50 374 ms, p95 425 ms |

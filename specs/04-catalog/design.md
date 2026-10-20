@@ -71,17 +71,23 @@ agg AS (
   FROM q JOIN fingerprints f ON f.hash = q.hash
   GROUP BY f.track_id, delta
 ),
-best AS (
-  SELECT DISTINCT ON (track_id) track_id, delta, c
+smoothed AS (
+  SELECT track_id, delta, c,
+    sum(c) OVER (PARTITION BY track_id ORDER BY delta RANGE BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS score
   FROM agg
-  ORDER BY track_id, c DESC
+),
+best AS (
+  SELECT DISTINCT ON (track_id) track_id, delta, score
+  FROM smoothed
+  ORDER BY track_id, score DESC, c DESC, delta
 )
-SELECT track_id AS "trackId", delta, c::int AS count
+SELECT track_id AS "trackId", delta, score::int AS count
 FROM best
-ORDER BY c DESC
+ORDER BY score DESC, track_id
 LIMIT $3;
 ```
 
+- `smoothed` (T8) puntúa cada desfase con sus votos más los de `delta - 1` y `delta + 1`. La consulta empieza en cualquier muestra, así que su rejilla de frames queda hasta medio hop corrida respecto a la indexada y los votos de una misma alineación se reparten entre dos desfases vecinos.
 - `DISTINCT ON` deja el mejor desfase de cada canción, así el segundo resultado es siempre **otra** canción (necesario para la razón score₁/score₂).
 - **Verificado** en PostgreSQL 16 con 4 M filas y 3.100 hashes de consulta: plan `Nested Loop` + `Index Only Scan using fingerprints_hash_idx`, `Heap Fetches: 0`, ~35 ms; devuelve la canción y el desfase correctos. Tamaño medido: ~72 B por fila con índice.
 - **Medido en Neon** (PostgreSQL 18, rama `dev`, 7 canciones reales): mismo plan con `Heap Fetches: 0`, pero ~85 B por fila y ~410 ms, porque cada hash de la consulta coincide con ~400 filas (ver `tasks.md`, resultados).

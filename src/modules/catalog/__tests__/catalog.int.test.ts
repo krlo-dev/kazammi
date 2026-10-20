@@ -68,6 +68,29 @@ describe("catalog repository (PGlite)", () => {
     expect(new Set(candidates.map((c) => c.trackId)).size).toBe(candidates.length);
   });
 
+  it("adds the votes of the neighbouring offsets, a query frame grid is not the indexed one", async () => {
+    const a = await insert(1, sequence(1000, 200));
+    const b = await insert(2, sequence(5000, 200));
+    // Track 1: 20 hashes at delta 40 and 20 at delta 41. Track 2: 30 hashes at delta 10.
+    const hashes = Uint32Array.from([
+      ...Array.from({ length: 20 }, (_, i) => 1040 + i),
+      ...Array.from({ length: 20 }, (_, i) => 1100 + i),
+      ...Array.from({ length: 30 }, (_, i) => 5010 + i),
+    ]);
+    const times = Uint32Array.from([
+      ...Array.from({ length: 20 }, (_, i) => i),
+      ...Array.from({ length: 20 }, (_, i) => 59 + i),
+      ...Array.from({ length: 30 }, (_, i) => i),
+    ]);
+    const candidates = await catalog.findCandidates(hashes, times, 5);
+
+    // The tie between deltas 40 and 41 resolves to the lower one.
+    expect(candidates).toEqual([
+      { trackId: a, delta: 40, count: 40 },
+      { trackId: b, delta: 10, count: 30 },
+    ]);
+  });
+
   it("returns the offset histogram of one track, top offsets sorted by delta", async () => {
     const a = await insert(1, sequence(1000, 200));
     await insert(2, sequence(1000, 200)); // same hashes, other track: must not count

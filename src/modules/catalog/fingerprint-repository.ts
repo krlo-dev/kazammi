@@ -139,7 +139,8 @@ export async function vacuumFingerprints(db: Database): Promise<void> {
 
 /**
  * Offset histogram in SQL: for every (track, anchor_frame - t) pair counts the matching
- * hashes, keeps the best offset of each track and returns the top `limit` tracks.
+ * hashes, scores each offset with the votes of offset ± 1, keeps the best offset of each
+ * track and returns the top `limit` tracks.
  * DISTINCT ON guarantees one row per track, so the runner-up is always another song.
  */
 export async function findCandidates(
@@ -165,14 +166,21 @@ export async function findCandidates(
         FROM q JOIN fingerprints f ON f.hash = q.hash
         GROUP BY f.track_id, delta
       ),
-      best AS (
-        SELECT DISTINCT ON (track_id) track_id, delta, c
+      -- A query starts at any sample, so its frame grid sits up to half a hop away from
+      -- the indexed one and the votes of one alignment split between delta and delta ± 1.
+      smoothed AS (
+        SELECT track_id, delta, c,
+          sum(c) OVER (PARTITION BY track_id ORDER BY delta RANGE BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS score
         FROM agg
-        ORDER BY track_id, c DESC, delta
+      ),
+      best AS (
+        SELECT DISTINCT ON (track_id) track_id, delta, score
+        FROM smoothed
+        ORDER BY track_id, score DESC, c DESC, delta
       )
-      SELECT track_id AS "trackId", delta, c::int AS count
+      SELECT track_id AS "trackId", delta, score::int AS count
       FROM best
-      ORDER BY c DESC, track_id
+      ORDER BY score DESC, track_id
       LIMIT ${limit}
     `),
   );

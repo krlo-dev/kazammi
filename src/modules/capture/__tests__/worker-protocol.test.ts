@@ -55,8 +55,8 @@ describe("handleFingerprintRequest", () => {
     expect(reply.debug).toBeUndefined();
     // Same values as the inline snapshot of fingerprint/__tests__/invariance.test.ts.
     expect({ count: reply.hashes.length, sha256: await sha256(reply.hashes) }).toEqual({
-      count: 233,
-      sha256: "3b36c2b467db116f14b04a3f627eeb6ad5a94e22d3b9f0a5ac5c1d486cc0fb47",
+      count: 386,
+      sha256: "61441b14faad83bc6e739a3c37232658f570d8a044c9e4d248aef3084f86fc9b",
     });
     expect(transfer).toEqual([reply.hashes.buffer, reply.anchorFrames.buffer]);
   });

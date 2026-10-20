@@ -87,13 +87,13 @@ Se buscan los puntos del espectrograma con más energía, porque son los que sob
 
 $$\mathcal{P} = \{(m_i, k_i)\}$$
 
-**Método por bandas** (determinista y barato):
+**Máximos locales 2D** (v4):
 
-1. En cada frame, dividir los bins en bandas logarítmicas: $[1, 10), [10, 20), [20, 40), [40, 80), [80, 160), [160, 512)$.
-2. Tomar el bin de máxima magnitud de cada banda.
-3. Conservar solo los máximos cuya magnitud supere $\alpha \cdot \bar{S}_m$, donde $\bar{S}_m$ es el promedio de los máximos de ese frame y $\alpha$ un coeficiente ajustable (inicial 1,0).
-4. Descartar frames por debajo de un umbral absoluto de energía (silencio).
-5. Inicio de nota: descartar el máximo de la banda $b$ en el frame $m$ si en el frame $m-1$ la misma banda tuvo un pico en un bin a distancia $\le B$ ($B = 1$). Sin este paso, una nota sostenida genera el mismo pico en cada frame y, con él, los mismos hashes repetidos.
+1. Un punto $(m, k)$ es candidato si $|X_m[k]|$ es el máximo de su vecindario $\{(m', k') : |m' - m| \le 5,\ |k' - k| \le 10\}$, es decir ±232 ms y ±108 Hz.
+2. Solo se buscan picos en $23 \le k < 372$ (248 Hz a 4 kHz), la banda que reproduce el parlante de un celular.
+3. Se descartan los puntos más de 70 dB por debajo del bin más fuerte del espectrograma (silencio).
+4. Empates: si dos valores de un vecindario difieren en menos de $10^{-3}$ relativo, se conserva el primero. Sin este paso, una nota sostenida y constante genera el mismo pico en cada frame y, con él, los mismos hashes repetidos.
+5. Densidad: un pico sobrevive si tiene menos de 20 picos más fuertes a ±0,5 s.
 
 Implementa: `fingerprint/peaks.ts`.
 
