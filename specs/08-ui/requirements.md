@@ -95,3 +95,6 @@ Reglas:
 | UI-R29 | M | DEBE respetar `prefers-reduced-motion`: orbe, cinta iridiscente y loader en versión estática o mínima. |
 | UI-R30 | M | Todo el texto visible DEBE estar en español. |
 | UI-R31 | M | El logo y el loader DEBEN usarse según la tabla de reubicación de `design-references.md`. |
+| UI-R32 | S | El resultado y cada fila de canción (Mis canciones, Guardadas, playlists) DEBEN tener un botón para escuchar la muestra de 5 s; solo suena una muestra a la vez y salir de la pantalla la detiene. |
+| UI-R33 | M | Las listas DEBEN mostrar los datos nuevos del servidor al volver a una pantalla ya visitada (por ejemplo, una canción agregada a una playlist desde Guardadas), sin recargar. |
+| UI-R34 | S | Guardadas DEBE tener un botón para volver a Identificar, como el de la playlist para volver a Mis playlists. |

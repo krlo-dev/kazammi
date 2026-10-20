@@ -197,8 +197,35 @@ describe("catalog repository (PGlite)", () => {
       year: 2020,
       durationSec: 180.5,
       hasCover: true,
+      hasPreview: false,
     });
     expect(await catalog.getTracksByIds([])).toEqual([]);
+  });
+
+  it("stores a sample, flags its track and replaces it on a second write", async () => {
+    const a = await insert(1, sequence(1000, 5));
+    const b = await insert(2, sequence(2000, 5));
+    expect(await catalog.getPreview(a)).toBeNull();
+
+    await catalog.setPreview(a, {
+      mime: "audio/mpeg",
+      startSec: 61.25,
+      data: Uint8Array.from([1, 2]),
+    });
+    await catalog.setPreview(a, {
+      mime: "audio/mpeg",
+      startSec: 90,
+      data: Uint8Array.from([3, 4, 5]),
+    });
+
+    const preview = await catalog.getPreview(a);
+    expect(preview?.mime).toBe("audio/mpeg");
+    expect(preview?.startSec).toBe(90);
+    expect(preview?.data).toBeInstanceOf(Uint8Array);
+    expect(Array.from(preview!.data)).toEqual([3, 4, 5]);
+    const [withSample, without] = await catalog.getTracksByIds([a, b]);
+    expect(withSample.hasPreview).toBe(true);
+    expect(without.hasPreview).toBe(false);
   });
 
   it("stores and returns covers as Uint8Array", async () => {

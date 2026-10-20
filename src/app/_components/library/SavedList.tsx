@@ -20,6 +20,14 @@ export function SavedList({
 }) {
   const [tracks, setTracks] = useState(initial);
   const [cursor, setCursor] = useState(initialCursor);
+  // Next keeps visited pages mounted: fresh server data (a track saved from a result)
+  // arrives as new props on this instance, so the first page restarts from them.
+  const [source, setSource] = useState(initial);
+  if (initial !== source) {
+    setSource(initial);
+    setTracks(initial);
+    setCursor(initialCursor);
+  }
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, startLoading] = useTransition();
   const [adding, setAdding] = useState<TrackView | null>(null);

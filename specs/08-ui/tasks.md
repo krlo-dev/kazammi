@@ -47,6 +47,12 @@ Todas las tareas se hacen en Claude Code con el skill Impeccable, después de qu
   - Cubre: UI-R28, UI-R29. Comandos de auditoría y pulido de Impeccable; probar a 360 px, proyectado y con movimiento reducido.
   - Commit: `fix(ui): address accessibility and responsive audit findings`
 
+- [x] **T13. Muestra de audio, listas al día y volver desde Guardadas**
+  - Cubre: UI-R32, UI-R33, UI-R34.
+  - Bug: al crear una playlist, ir a Guardadas y agregarle una canción, la playlist seguía vacía al volver (con el botón atrás o por el menú) hasta recargar. Causa: Next 16 mantiene montadas las páginas visitadas, y `PlaylistDetail` y `SavedList` copiaban sus datos a un estado local solo al montarse, así que ignoraban los datos nuevos que traía la revalidación. Ahora adoptan los props nuevos cuando cambian.
+  - Verifica: reproducción en Edge headless (crear playlist, agregar desde Guardadas, volver por atrás y por el menú): antes "0 canciones", ahora la canción aparece; muestra que suena y se detiene sola a los 5 s en Guardadas (1280 y 390 px).
+  - Commit: `fix(ui): keep library lists fresh, add a back link to saved and sample buttons`
+
 - [ ] **T12. Borrar `sources/`** (manual, Krlo)
   - Cuando T1 a T11 estén hechas. Sin commit (la carpeta nunca estuvo en el repo).
 

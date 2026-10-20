@@ -1,9 +1,9 @@
 import { eq, inArray, sql } from "drizzle-orm";
 
-import { appMeta, trackCovers, tracks, type Database } from "@/modules/db";
+import { appMeta, trackCovers, trackPreviews, tracks, type Database } from "@/modules/db";
 
 import { rowsOf } from "./sql";
-import type { CatalogStats, Cover, Track } from "./types";
+import type { CatalogStats, Cover, Preview, Track } from "./types";
 
 const FINGERPRINT_VERSION_KEY = "fingerprint_version";
 
@@ -16,6 +16,7 @@ const trackColumns = {
   year: tracks.year,
   durationSec: tracks.durationSec,
   hasCover: tracks.hasCover,
+  hasPreview: tracks.hasPreview,
 };
 
 /** Id of the track ingested from a file with this SHA-256, or null if there is none. */
@@ -43,6 +44,30 @@ export async function getCover(db: Database, trackId: number): Promise<Cover | n
     .where(eq(trackCovers.trackId, trackId))
     .limit(1);
   return rows[0] ?? null;
+}
+
+export async function getPreview(db: Database, trackId: number): Promise<Preview | null> {
+  const rows = await db
+    .select({
+      mime: trackPreviews.mime,
+      startSec: trackPreviews.startSec,
+      data: trackPreviews.data,
+    })
+    .from(trackPreviews)
+    .where(eq(trackPreviews.trackId, trackId))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+/** Stores (or replaces) the sample of a track and flags the track as having one. */
+export async function setPreview(db: Database, trackId: number, preview: Preview): Promise<void> {
+  await db.transaction(async (tx) => {
+    await tx
+      .insert(trackPreviews)
+      .values({ trackId, ...preview })
+      .onConflictDoUpdate({ target: trackPreviews.trackId, set: preview });
+    await tx.update(tracks).set({ hasPreview: true }).where(eq(tracks.id, trackId));
+  });
 }
 
 export async function getStats(db: Database): Promise<CatalogStats> {

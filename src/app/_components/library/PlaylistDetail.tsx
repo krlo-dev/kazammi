@@ -30,6 +30,14 @@ export function PlaylistDetail({
   const router = useRouter();
   const [tracks, setTracks] = useState(playlist.tracks);
   const [name, setName] = useState(playlist.name);
+  // Next keeps visited pages mounted, so fresh server data arrives as new props on an
+  // instance that already copied the old ones: adopt them (a track added from Guardadas).
+  const [source, setSource] = useState(playlist);
+  if (playlist !== source) {
+    setSource(playlist);
+    setTracks(playlist.tracks);
+    setName(playlist.name);
+  }
   const [renaming, setRenaming] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);

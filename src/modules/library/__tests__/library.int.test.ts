@@ -173,6 +173,7 @@ describe("library service (PGlite)", () => {
         year: null,
         durationSec: 200,
         hasCover: true,
+        hasPreview: false,
       });
       expect(item.savedAt).toBeInstanceOf(Date);
     });

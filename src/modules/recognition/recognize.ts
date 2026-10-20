@@ -99,10 +99,14 @@ export function createRecognizer(deps: RecognizerDeps) {
       };
     }
 
-    const { hasCover, ...metadata } = track;
+    const { hasCover, hasPreview, ...metadata } = track;
     return {
       status: "match",
-      track: { ...metadata, coverUrl: hasCover ? `/api/tracks/${track.id}/cover` : null },
+      track: {
+        ...metadata,
+        coverUrl: hasCover ? `/api/tracks/${track.id}/cover` : null,
+        previewUrl: hasPreview ? `/api/tracks/${track.id}/preview` : null,
+      },
       confidence: decision.confidence,
       offsetSeconds: (decision.delta * DEFAULT_PARAMS.hopSize) / DEFAULT_PARAMS.sampleRate,
       score: decision.score,

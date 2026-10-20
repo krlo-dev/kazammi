@@ -42,6 +42,15 @@ CREATE TABLE track_covers (
   data     bytea NOT NULL
 );
 
+-- Muestra de 5 s (CAT-R9, migración 0004): la escribe la ingesta, la sirve /api/tracks/[id]/preview.
+CREATE TABLE track_previews (
+  track_id  integer PRIMARY KEY REFERENCES tracks(id) ON DELETE CASCADE,
+  mime      text NOT NULL,      -- audio/mpeg
+  start_sec real NOT NULL,      -- dónde empieza en la canción
+  data      bytea NOT NULL      -- ~80 KB (5 s a 128 kb/s)
+);
+-- tracks.has_preview boolean NOT NULL DEFAULT false
+
 CREATE TABLE fingerprints (
   hash         bigint  NOT NULL,                 -- uint32 no cabe en integer con signo
   track_id     integer NOT NULL REFERENCES tracks(id) ON DELETE CASCADE,
@@ -137,6 +146,8 @@ export interface CatalogRepository {
   findCandidates(hashes: Uint32Array, times: Uint32Array, limit: number): Promise<Candidate[]>;
   getTracksByIds(ids: number[]): Promise<Track[]>;
   getCover(trackId: number): Promise<{ mime: string; data: Uint8Array } | null>;
+  getPreview(trackId: number): Promise<{ mime: string; startSec: number; data: Uint8Array } | null>;
+  setPreview(trackId: number, preview: Preview): Promise<void>; // upsert + has_preview = true
   getStats(): Promise<{ tracks: number; fingerprints: number; fingerprintVersion: number | null; tableBytes: number }>;
   setFingerprintVersion(version: number): Promise<void>;
 }
@@ -153,6 +164,7 @@ export function createCatalogRepository(db: Database): CatalogRepository;
 | `index.ts` | `createCatalogRepository` y tipos |
 | `__tests__/catalog.int.test.ts` | Integración con PGlite |
 | `src/app/api/tracks/[id]/cover/route.ts` | Sirve la portada (exige sesión) |
+| `src/app/api/tracks/[id]/preview/route.ts` | Sirve la muestra de 5 s (exige sesión) |
 
 ## Notas de implementación
 

@@ -11,6 +11,7 @@ export const trackColumns = {
   year: tracks.year,
   durationSec: tracks.durationSec,
   hasCover: tracks.hasCover,
+  hasPreview: tracks.hasPreview,
 };
 
 /** SQLSTATE of a Postgres error, also when Drizzle wraps it (postgres.js and PGlite). */

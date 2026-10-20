@@ -10,6 +10,7 @@ import type { MatchResponse } from "@/shared";
 import { AddToPlaylistSheet } from "../library/AddToPlaylistSheet";
 import { SaveButton } from "../library/SaveButton";
 import { Cover } from "../ui/Cover";
+import { PreviewButton } from "../ui/PreviewButton";
 import { useCoverColor } from "./use-cover-color";
 
 const SPARKS = [
@@ -120,7 +121,10 @@ export function MatchView({ result, onAgain }: { result: MatchResponse; onAgain:
           </span>
         </p>
 
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap gap-2.5">
+          {track.previewUrl && (
+            <PreviewButton url={track.previewUrl} title={track.title} variant="pill" />
+          )}
           <button type="button" onClick={() => setSheetOpen(true)} className="btn-pill">
             <Plus aria-hidden className="h-[18px] w-[18px]" strokeWidth={2} />
             Agregar a playlist

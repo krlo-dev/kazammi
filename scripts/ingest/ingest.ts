@@ -1,9 +1,10 @@
-import type { CatalogRepository, Cover } from "@/modules/catalog";
+import type { CatalogRepository, Cover, Preview } from "@/modules/catalog";
 import { DEFAULT_PARAMS, fingerprint, FINGERPRINT_VERSION } from "@/modules/fingerprint";
 
 import type { TrackMetadata } from "./metadata";
 import { COVER_MIME } from "./metadata";
 import { createSerialQueue, forEachConcurrent } from "./pool";
+import { loudestWindow, PREVIEW_MIME, PREVIEW_SECONDS } from "./preview";
 import {
   BYTES_PER_FINGERPRINT,
   formatOutcome,
@@ -39,6 +40,8 @@ export interface IngestDeps {
   decode(file: string): Promise<Float32Array>;
   readMetadata(file: string): Promise<TrackMetadata>;
   normalizeCover(picture: Uint8Array): Promise<Uint8Array>;
+  /** MP3 of PREVIEW_SECONDS of the file from `startSec`. */
+  encodePreview(file: string, startSec: number): Promise<Uint8Array>;
   log(line: string): void;
 }
 
@@ -46,7 +49,8 @@ const reasonOf = (error: unknown) => (error instanceof Error ? error.message : S
 
 /**
  * scan -> SHA-256 -> skip known files -> [concurrent] tags + cover + ffmpeg + fingerprint
- * -> [serial] one transaction per song -> VACUUM ANALYZE + app_meta + summary.
+ * + sample -> [serial] one transaction per song -> VACUUM ANALYZE + app_meta + summary.
+ * A known file without a sample only gets its sample (backfill of older catalogs).
  */
 export async function runIngest(options: IngestOptions, deps: IngestDeps): Promise<IngestSummary> {
   const started = performance.now();
@@ -77,13 +81,42 @@ export async function runIngest(options: IngestOptions, deps: IngestDeps): Promi
     deps.log(formatOutcome(outcome, outcomes.length, files.length));
   };
 
+  /** The loudest PREVIEW_SECONDS of the song; a failure only costs the sample. */
+  async function makePreview(file: string, pcm: Float32Array, label: string) {
+    try {
+      const startSec = loudestWindow(pcm, DEFAULT_PARAMS.sampleRate, PREVIEW_SECONDS);
+      const data = await deps.encodePreview(file, startSec);
+      return { mime: PREVIEW_MIME, startSec, data } satisfies Preview;
+    } catch (error) {
+      deps.log(`   aviso: ${label}: no se pudo crear la muestra de audio (${reasonOf(error)})`);
+      return null;
+    }
+  }
+
   await forEachConcurrent(files, options.concurrency, async (file) => {
     let label = file.relativePath;
     try {
       const sha = await sha256File(file.absolutePath);
       const existingId = repo ? await repo.findTrackIdBySha256(sha) : null;
-      if (existingId !== null && !options.reset) {
-        report({ status: "skipped", label, reason: "ya está en la base" });
+      const [existing] = repo && existingId !== null ? await repo.getTracksByIds([existingId]) : [];
+      if (repo && existingId !== null && !options.reset) {
+        if (existing?.hasPreview) {
+          report({ status: "skipped", label, reason: "ya está en la base" });
+          return;
+        }
+        const preview = await makePreview(
+          file.absolutePath,
+          await deps.decode(file.absolutePath),
+          label,
+        );
+        if (preview) await write(() => repo.setPreview(existingId, preview));
+        report({
+          status: "skipped",
+          label,
+          reason: preview
+            ? "ya está en la base; se agregó la muestra de audio"
+            : "ya está en la base",
+        });
         return;
       }
 
@@ -119,6 +152,10 @@ export async function runIngest(options: IngestOptions, deps: IngestDeps): Promi
         return;
       }
 
+      const preview = existing?.hasPreview
+        ? null
+        : await makePreview(file.absolutePath, pcm, label);
+
       await write(async () => {
         if (existingId !== null) {
           await repo.replaceFingerprints({
@@ -127,8 +164,9 @@ export async function runIngest(options: IngestOptions, deps: IngestDeps): Promi
             anchorFrames,
             fingerprintVersion: FINGERPRINT_VERSION,
           });
+          if (preview) await repo.setPreview(existingId, preview);
         } else {
-          await repo.insertTrackWithFingerprints({
+          const id = await repo.insertTrackWithFingerprints({
             track: {
               sourcePath: file.relativePath,
               contentSha256: sha,
@@ -144,6 +182,7 @@ export async function runIngest(options: IngestOptions, deps: IngestDeps): Promi
             anchorFrames,
             fingerprintVersion: FINGERPRINT_VERSION,
           });
+          if (preview) await repo.setPreview(id, preview);
         }
       });
       if (cover) coverBytesWritten += cover.data.byteLength;

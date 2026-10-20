@@ -23,7 +23,7 @@ import {
   type RecognizerState,
 } from "@/modules/capture";
 
-import { Logo } from "../brand/Logo";
+import { LogoLoader } from "../brand/LogoLoader";
 import { TrackRow } from "../library/TrackRow";
 import { StateMessage } from "../ui/StateMessage";
 import { MatchView } from "./MatchView";
@@ -214,8 +214,6 @@ function Home({
     // center axis. "Mis canciones" stays anchored to the bottom.
     <div className="grid flex-1 grid-rows-[auto_1fr_auto] gap-y-4">
       <h1 className="display text-[clamp(2.75rem,8vw,5rem)] lg:text-center">
-        {/* Desktop only: the mark crowns the centered title. */}
-        <Logo className="mx-auto mb-3 hidden h-16 w-16 text-white lg:block" />
         Identificar
         <br />
         <span className="text-fg-2">canciones</span>
@@ -229,7 +227,7 @@ function Home({
             onClick={onStart}
             disabled={requesting}
             aria-label="Identificar la canción que está sonando"
-            className="group relative w-[min(66vw,20rem)] rounded-full transition-transform duration-300 ease-[var(--ease-out-quart)] hover:scale-[1.015] active:scale-[0.985] disabled:cursor-progress lg:w-[min(52vw,41vh,32rem)]"
+            className="group relative w-[min(66vw,20rem)] rounded-full transition-transform duration-300 ease-[var(--ease-out-quart)] hover:scale-[1.015] active:scale-[0.985] disabled:cursor-progress lg:w-[min(52vw,49vh,32rem)]"
           >
             <Orb mode={requesting ? "requesting" : "idle"} ring={0.45} />
             <MicGlyph className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 text-white transition-transform duration-300 group-hover:scale-110" />
@@ -329,7 +327,11 @@ function ListeningOverlay({
       <div className="flex flex-1 flex-col items-center justify-center px-2">
         <div className={`relative w-[min(96vw,74vh,44rem)] kz-id-listeningOrb`}>
           <Orb mode="listening" liveRef={liveRef} progressRef={progressRef} />
-          <MicGlyph className="absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 text-white" />
+          {/* While listening the mic gives way to the dancing Mono DJ of the loader. */}
+          <LogoLoader
+            label="Escuchando"
+            className="absolute left-1/2 top-1/2 h-[24%] w-[24%] -translate-x-1/2 -translate-y-1/2 text-white"
+          />
         </div>
       </div>
 

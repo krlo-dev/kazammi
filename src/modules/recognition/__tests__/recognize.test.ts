@@ -15,6 +15,7 @@ const TRACK: Track = {
   year: 2001,
   durationSec: 320.4,
   hasCover: true,
+  hasPreview: true,
 };
 
 function fakeCatalog(options: {
@@ -72,12 +73,14 @@ describe("recognize", () => {
         year: 2001,
         durationSec: 320.4,
         coverUrl: "/api/tracks/42/cover",
+        previewUrl: "/api/tracks/42/preview",
       },
       score: 156,
       runnerUpScore: 9,
     });
     if (result.status !== "match") throw new Error("expected a match");
     expect(result.track).not.toHaveProperty("hasCover");
+    expect(result.track).not.toHaveProperty("hasPreview");
     expect(result.offsetSeconds).toBeCloseTo((268 * DEFAULT_PARAMS.hopSize) / 11025, 10);
     expect(result.confidence).toBeCloseTo(1 - 9 / 156, 10);
     expect(result.timings.totalMs).toBeGreaterThanOrEqual(result.timings.dbMs);
@@ -90,13 +93,14 @@ describe("recognize", () => {
     expect(catalog.getOffsetHistogram).not.toHaveBeenCalled();
   });
 
-  it("returns a null cover url when the track has no cover", async () => {
+  it("returns null cover and sample urls when the track has neither", async () => {
     const catalog = fakeCatalog({
       candidates: [{ trackId: 42, delta: 0, count: 50 }],
-      tracks: [{ ...TRACK, hasCover: false }],
+      tracks: [{ ...TRACK, hasCover: false, hasPreview: false }],
     });
     const result = await createRecognizer({ catalog })(request());
     expect(result.status === "match" && result.track.coverUrl).toBeNull();
+    expect(result.status === "match" && result.track.previewUrl).toBeNull();
   });
 
   it("adds the offset histogram of the winner in debug mode", async () => {

@@ -137,7 +137,11 @@ export function Orb({
         const theta = (p / POINTS) * TAU;
         let r = R * breathe;
         if (!still) {
-          r += R * (0.008 * Math.sin(3 * theta + t * 0.9) + 0.006 * Math.sin(5 * theta - t * 1.2));
+          // The slow undulation fades in with listening: at rest the rim is a true circle.
+          r +=
+            R *
+            presence *
+            (0.008 * Math.sin(3 * theta + t * 0.9) + 0.006 * Math.sin(5 * theta - t * 1.2));
           r += R * presence * (0.04 * level + 0.22 * bandAt(theta) ** 1.3);
         }
         xs[p] = c + r * Math.sin(theta);
