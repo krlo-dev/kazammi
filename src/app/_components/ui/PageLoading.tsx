@@ -4,7 +4,7 @@ import { LogoLoader } from "../brand/LogoLoader";
 export function PageLoading() {
   return (
     <div className="grid flex-1 place-items-center py-24" role="status">
-      <LogoLoader className="h-28 w-28 text-fg-2" />
+      <LogoLoader className="h-44 w-44 text-fg-2 lg:h-56 lg:w-56" />
     </div>
   );
 }

@@ -18,8 +18,8 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
           className="flex items-center gap-2.5 rounded-lg text-fg"
           aria-label="Kazammi, ir a Identificar"
         >
-          <Logo className="h-8 w-8" />
-          <span className="text-lg font-semibold tracking-[-0.02em]">Kazammi</span>
+          <Logo className="h-11 w-11 lg:h-12 lg:w-12" />
+          <span className="text-xl font-semibold tracking-[-0.02em] lg:text-2xl">Kazammi</span>
         </Link>
         <div className="flex items-center gap-2.5">
           <Suspense fallback={<span className="h-11 w-11 rounded-full bg-glass" />}>

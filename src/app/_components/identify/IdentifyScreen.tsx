@@ -209,10 +209,10 @@ function Home({
 }) {
   const requesting = state.status === "requesting";
   return (
-    // The reference's composition at every width: title top-left, the orb on the center
-    // axis, "Mis canciones" anchored to the bottom.
+    // Title top-left on the phone; on desktop the title and "Mis canciones" share the orb's
+    // center axis. "Mis canciones" stays anchored to the bottom.
     <div className="grid flex-1 grid-rows-[auto_1fr_auto] gap-y-4">
-      <h1 className="display text-[clamp(2.75rem,8vw,5rem)]">
+      <h1 className="display text-[clamp(2.75rem,8vw,5rem)] lg:text-center">
         Identificar
         <br />
         <span className="text-fg-2">canciones</span>
@@ -247,7 +247,7 @@ function Home({
 
 function MyMusic({ recent }: { recent: TrackView[] }) {
   return (
-    <section aria-labelledby="my-music" className="w-full lg:max-w-md">
+    <section aria-labelledby="my-music" className="mx-auto w-full lg:max-w-md">
       <div className="mb-3 flex items-center justify-between">
         <h2 id="my-music" className="text-xl font-medium tracking-[-0.015em]">
           Mis canciones

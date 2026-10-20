@@ -107,7 +107,7 @@ export function LoginForms({ next }: { next: string }) {
               </button>
             ))}
           </div>
-          <Logo className="h-9 w-9 shrink-0 text-white" title="Kazammi" />
+          <Logo className="h-12 w-12 shrink-0 text-white" title="Kazammi" />
         </div>
 
         <h1 id="auth-title" className="mt-7 text-[1.625rem] font-semibold tracking-[-0.02em]">
@@ -172,7 +172,7 @@ export function LoginForms({ next }: { next: string }) {
           role="status"
           className="absolute inset-0 grid place-items-center rounded-3xl bg-card/95 backdrop-blur-xl"
         >
-          <LogoLoader className="h-28 w-28 text-white" label="Entrando a Kazammi" />
+          <LogoLoader className="h-44 w-44 text-white" label="Entrando a Kazammi" />
         </div>
       )}
     </div>
