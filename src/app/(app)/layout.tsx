@@ -12,7 +12,9 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex min-h-dvh flex-1 flex-col">
       <div aria-hidden className="app-field" />
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 pt-4 sm:px-6 lg:px-10 lg:pt-6">
+      {/* On desktop the brand sits on the page's center axis, above the title. */}
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 pt-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-10 lg:pt-6">
+        <span aria-hidden className="hidden lg:block" />
         <Link
           href="/"
           className="flex items-center gap-2.5 rounded-lg text-fg"
@@ -21,7 +23,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
           <Logo className="h-11 w-11 lg:h-12 lg:w-12" />
           <span className="text-xl font-semibold tracking-[-0.02em] lg:text-2xl">Kazammi</span>
         </Link>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 lg:justify-self-end">
           <Suspense fallback={<span className="h-11 w-11 rounded-full bg-glass" />}>
             <Profile />
           </Suspense>
