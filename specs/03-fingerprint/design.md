@@ -6,22 +6,22 @@
 export interface FingerprintParams {
   sampleRate: 11025;
   windowSize: 1024;
-  hopSize: 512;
-  neighborhood: { bins: number; frames: number }; // ±10 bins, ±5 frames (v4)
+  hopSize: 256;                   // 23 ms por frame (v5)
+  neighborhood: { bins: number; frames: number }; // ±6 bins, ±10 frames (v5)
   minBin: number;                 // 23 (248 Hz)
   maxBin: number;                 // 372 (4 kHz), exclusivo
   peakFloorDb: number;            // -70: piso relativo al bin más fuerte del espectrograma
-  maxPeaksPerSecond: number;      // 20: picos más fuertes permitidos a ±0,5 s
+  maxPeaksPerSecond: number;      // 30: picos más fuertes permitidos a ±0,5 s
   targetZone: {
     minDeltaFrames: number;       // 1
-    maxDeltaFrames: number;       // 64
+    maxDeltaFrames: number;       // 128 (~3 s)
     maxDeltaBins: number;         // 128
     fanOut: number;               // 10 (v3)
   };
 }
 
 export const DEFAULT_PARAMS: FingerprintParams;
-export const FINGERPRINT_VERSION: number; // 1 inicial; 2 inicio de nota; 3 fan-out 10; 4 máximos locales 2D
+export const FINGERPRINT_VERSION: number; // 1 inicial; 2 inicio de nota; 3 fan-out 10; 4 máximos locales 2D; 5 hop 256 y picos más densos
 
 export interface Peak { frame: number; bin: number; magnitude: number }
 
@@ -55,7 +55,7 @@ export function decodeHash(hash: number): { anchorBin: number; pointBin: number;
 pcm -> normalize (pico a 1.0) -> stft (dsp) -> findPeaks -> buildHashes -> Fingerprint
 ```
 
-### `findPeaks(spec, params)` (v4)
+### `findPeaks(spec, params)` (v4, parámetros de la v5)
 1. Piso: `loudest · 10^(peakFloorDb / 20)`, con `loudest` el bin más fuerte del espectrograma. La comparación es estricta, así que el silencio digital (`loudest = 0`) no da picos.
 2. Filtro de máximo separable: primero a lo largo de la frecuencia (±`neighborhood.bins`, en todos los bins), luego a lo largo del tiempo (±`neighborhood.frames`, solo en [minBin, maxBin)).
 3. Candidato: un bin de [minBin, maxBin) sobre el piso cuyo valor, con tolerancia relativa de 1e-3, es el máximo de su vecindario.
@@ -97,6 +97,7 @@ Costo: el filtro de máximo es O(frames · bins · vecindario), unos 2 a 3 s por
 
 | Decisión | Alternativa | Motivo | Requisitos |
 |---|---|---|---|
+| Hop de 256 y picos más densos (v5) | Hop de 512 con más picos por segundo | Con la misma densidad, el doble de resolución temporal reparte los votos al azar entre el doble de desfases: la peor canción ajena queda en 9 votos contra 15 a 23 con hop 512 y una densidad parecida, y la cobertura sube de 95,2% a 98,1% (ver `tasks.md` T11) | FP-R2 |
 | Máximos locales 2D (v4) | Picos por bandas con inicio de nota (v2 y v3) | Medido con 31 grabaciones reales de celular: los picos de inicio de nota no sobreviven al parlante y la sala (8 de 31 reconocibles); el máximo local en ±10 bins × ±5 frames, limitado a 248 Hz a 4 kHz, reconoce 24 de 31 con el ruido de fondo en 3 a 8 votos (ver `tasks.md` T10) | FP-R2 |
 | Primer valor de un empate (v4); antes, picos de inicio de nota (v2) | Máximo temporal por banda en ±W frames; subir `minDeltaFrames`; deduplicar en SQL | Medido en v1: una nota sostenida repite el mismo pico frame tras frame (30 s de audio: 6.577 hashes, solo 748 distintos, 85% con Δt de 1 a 5). Con el máximo temporal (W = 3), dentro de una nota estable el frame ganador depende del desfase de la consulta y el score cae a la mitad que con inicio de nota (consultas de 3 s: 29 a 111 contra 75 a 268), con una reducción de filas parecida. Subir `minDeltaFrames` deja los anclas repetidos; deduplicar en SQL no reduce las filas indexadas | FP-R10 |
 | Hash empaquetado en uint32 | String `"k1|k2|dt"` o SHA-1 | Columna numérica (`bigint` en Postgres): índice más pequeño y búsquedas más rápidas que con texto | FP-R3 |

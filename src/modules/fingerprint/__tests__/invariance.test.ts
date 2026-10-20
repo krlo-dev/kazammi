@@ -20,12 +20,12 @@ describe("fingerprint invariances", () => {
     // If this snapshot changes, the algorithm or its params changed: bump FINGERPRINT_VERSION.
     expect({ count: hashes.length, sha256: await sha256(hashes) }).toMatchInlineSnapshot(`
       {
-        "count": 386,
-        "sha256": "61441b14faad83bc6e739a3c37232658f570d8a044c9e4d248aef3084f86fc9b",
+        "count": 404,
+        "sha256": "9afe158b753b27349b6c907a1e1938930dd9fe7bd47665cde084d5b1d09f0054",
       }
     `);
     expect(await sha256(anchorFrames)).toMatchInlineSnapshot(
-      `"096bbbecf4d58656c959d935185d92659e8b708895fddb0704972950756fa167"`,
+      `"d12335a741507eced882b8befc6d8c4dd4d8f2d2b7083a2d8eb772555b3a0ba0"`,
     );
     expect(fingerprint(melody(10, 42)).hashes).toEqual(hashes);
   });

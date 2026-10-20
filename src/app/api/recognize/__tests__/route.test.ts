@@ -4,7 +4,7 @@ import { getAuth } from "@/modules/auth";
 import { createCatalogRepository, type CatalogRepository } from "@/modules/catalog";
 import type { Database } from "@/modules/db";
 import { createTestDb } from "@/modules/db/testing";
-import { fingerprint, FINGERPRINT_VERSION } from "@/modules/fingerprint";
+import { DEFAULT_PARAMS, fingerprint, FINGERPRINT_VERSION } from "@/modules/fingerprint";
 import { createLibraryService } from "@/modules/library";
 import { recognizeResponseSchema } from "@/shared";
 
@@ -136,7 +136,9 @@ describe("POST /api/recognize", () => {
       coverUrl: `/api/tracks/${songId}/cover`,
     });
     expect(body.saved).toBe(false);
-    expect(Math.abs(body.offsetSeconds - 12)).toBeLessThanOrEqual(512 / SAMPLE_RATE);
+    expect(Math.abs(body.offsetSeconds - 12)).toBeLessThanOrEqual(
+      DEFAULT_PARAMS.hopSize / SAMPLE_RATE,
+    );
     expect(body.score).toBeGreaterThan(body.runnerUpScore * 2);
     expect(body).not.toHaveProperty("debug");
   });

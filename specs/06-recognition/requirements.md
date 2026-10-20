@@ -38,4 +38,4 @@ Referencia matemática: sección 8 de [`math-model.md`](../00-foundation/math-mo
 - Segmentos de 10 s a 10 dB SNR: precisión >= 90% (criterio V-4 de la visión).
 - Segmentos de canciones no indexadas: 0 falsos positivos en 50 intentos.
 - Sin sesión, `POST /api/recognize` responde 401.
-- Error del desfase estimado: <= 1 frame (46 ms) en los aciertos.
+- Error del desfase estimado: <= 1 frame (23 ms desde la v5; 46 ms antes) en los aciertos.

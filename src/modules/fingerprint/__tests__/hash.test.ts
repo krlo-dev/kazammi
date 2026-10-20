@@ -74,16 +74,17 @@ describe("buildHashes", () => {
     expect(pairs.filter((p) => p.anchor === 0 && p.anchorBin === 100)).toHaveLength(1);
     for (const p of pairs) {
       expect(p.deltaFrames).toBeGreaterThanOrEqual(1);
-      expect(p.deltaFrames).toBeLessThanOrEqual(64);
+      expect(p.deltaFrames).toBeLessThanOrEqual(DEFAULT_PARAMS.targetZone.maxDeltaFrames);
       expect(Math.abs(p.pointBin - p.anchorBin)).toBeLessThanOrEqual(128);
     }
   });
 
   it("stops looking once a peak is farther than maxDeltaFrames", () => {
-    const peaks = [peak(0, 10), peak(64, 10), peak(65, 10)];
+    const max = DEFAULT_PARAMS.targetZone.maxDeltaFrames;
+    const peaks = [peak(0, 10), peak(max, 10), peak(max + 1, 10)];
     const pairs = Array.from(buildHashes(peaks, DEFAULT_PARAMS).hashes, decodeHash);
     expect(pairs).toEqual([
-      { anchorBin: 10, pointBin: 10, deltaFrames: 64 },
+      { anchorBin: 10, pointBin: 10, deltaFrames: max },
       { anchorBin: 10, pointBin: 10, deltaFrames: 1 },
     ]);
   });

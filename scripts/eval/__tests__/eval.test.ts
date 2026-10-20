@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { fingerprint } from "@/modules/fingerprint";
+import { DEFAULT_PARAMS, fingerprint } from "@/modules/fingerprint";
 import { decide, DEFAULT_MATCH_PARAMS, type Recognize } from "@/modules/recognition";
 
 import { runEval, type EvalSong } from "../eval";
@@ -72,7 +72,7 @@ function memoryRecognizer(songs: EvalSong[]): Recognize {
         coverUrl: null,
       },
       confidence: decision.confidence,
-      offsetSeconds: (decision.delta * 512) / SAMPLE_RATE,
+      offsetSeconds: (decision.delta * DEFAULT_PARAMS.hopSize) / SAMPLE_RATE,
       score: decision.score,
       runnerUpScore: decision.runnerUpScore,
       timings,
@@ -123,7 +123,7 @@ describe("runEval", () => {
       (r) => r.kind === "indexed" && r.condition === "white" && r.snr === Infinity,
     )) {
       expect(r.hit).toBe(true);
-      expect(r.offsetErrorSec).toBeLessThanOrEqual(512 / SAMPLE_RATE);
+      expect(r.offsetErrorSec).toBeLessThanOrEqual(DEFAULT_PARAMS.hopSize / SAMPLE_RATE);
     }
   });
 
