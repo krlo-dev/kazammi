@@ -54,6 +54,7 @@ Sesión del 2026-10-19 con Impeccable (`init`, flujo de trabajo nuevo, camino co
 - **Cómo funciona**: un paso por pantalla con su ecuación (KaTeX renderizado en el servidor) y los datos reales de la última escucha, que `capture` guarda en un store de la pestaña. Se pierden al recargar; entonces la página invita a identificar una canción.
 - **Portadas**: `next/image` con `unoptimized`, porque la ruta de portadas exige la cookie de sesión y el optimizador no la envía.
 - **CSS modules**: no se usan. La regla `"*.css"` de Turbopack en `next.config.ts` también captura los `*.module.css`, que quedaban sin aplicar; esos estilos viven en `globals.css` con prefijo `kz-`.
+- **Ajustes del 2026-10-20 (pedido de Krlo)**: en escritorio, el título "Identificar canciones" y "Mis canciones" se centran sobre el eje del orbe, como ya se veía en el celular; en el celular el título sigue arriba a la izquierda. El logo del encabezado pasa de 32 a 44 px (48 px en escritorio) y el login de 36 a 48 px. El loader pasa de 112 a 176 px (224 px en escritorio).
 - **Fuera de alcance de esta sesión**: T10 (demo de FFT, prioridad C).
 
 ### Verificación
