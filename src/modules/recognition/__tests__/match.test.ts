@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { confidence, decide, DEFAULT_MATCH_PARAMS } from "../match";
 
-const params = DEFAULT_MATCH_PARAMS; // minScore 25, minRatio 2
+const params = DEFAULT_MATCH_PARAMS; // minScore 15, minRatio 2
 const c = (trackId: number, count: number, delta = 100) => ({ trackId, count, delta });
 
 describe("decide", () => {
@@ -33,9 +33,9 @@ describe("decide", () => {
   });
 
   it("rejects a winner below the absolute minimum", () => {
-    expect(decide([c(1, 19), c(2, 1)], params)).toEqual({
+    expect(decide([c(1, 14), c(2, 1)], params)).toEqual({
       status: "no_match",
-      score: 19,
+      score: 14,
       runnerUpScore: 1,
       confidence: 0,
     });

@@ -86,9 +86,9 @@ export default function HowItWorksPage() {
             title="La constelación"
             text={
               <>
-                De todo el espectrograma solo importan los picos: en cada instante, el bin más
-                fuerte de cada banda de frecuencia, si supera el promedio y empieza una nota. Esos
-                puntos sobreviven al ruido y al volumen. Aquí hay <PeakCount />.
+                De todo el espectrograma solo importan los picos: los puntos más fuertes de su
+                entorno, unos 100 Hz y un cuarto de segundo a cada lado. Esos puntos sobreviven al
+                ruido, al parlante y al volumen. Aquí hay <PeakCount />.
               </>
             }
             equation={

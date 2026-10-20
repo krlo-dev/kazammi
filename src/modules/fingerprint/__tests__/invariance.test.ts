@@ -20,12 +20,12 @@ describe("fingerprint invariances", () => {
     // If this snapshot changes, the algorithm or its params changed: bump FINGERPRINT_VERSION.
     expect({ count: hashes.length, sha256: await sha256(hashes) }).toMatchInlineSnapshot(`
       {
-        "count": 233,
-        "sha256": "3b36c2b467db116f14b04a3f627eeb6ad5a94e22d3b9f0a5ac5c1d486cc0fb47",
+        "count": 386,
+        "sha256": "61441b14faad83bc6e739a3c37232658f570d8a044c9e4d248aef3084f86fc9b",
       }
     `);
     expect(await sha256(anchorFrames)).toMatchInlineSnapshot(
-      `"b17b89087236ae9943dd8d9f68e3efeadfe890c32a187f9147d7b4108df37e2a"`,
+      `"096bbbecf4d58656c959d935185d92659e8b708895fddb0704972950756fa167"`,
     );
     expect(fingerprint(melody(10, 42)).hashes).toEqual(hashes);
   });
@@ -58,8 +58,8 @@ describe("fingerprint invariances", () => {
 
     const original = new Set(pairsOf(fingerprint(signal)));
     const cutFp = fingerprint(cut);
-    // The first frame of the cut has no previous frame for the onset check, so a note that
-    // was already sounding shows up as an onset there: skip the anchors of that frame.
+    // The first frame of the cut sees no earlier frames, so a note that was already sounding
+    // (a plateau whose first frame was cut) shows up as a peak there: skip its anchors.
     const from = cutFp.anchorFrames.findIndex((frame) => frame >= 1);
     // Re-express the cut fingerprint on the original time axis.
     const realigned = pairsOf({

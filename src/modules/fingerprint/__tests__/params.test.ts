@@ -13,19 +13,20 @@ describe("fingerprint params", () => {
       sampleRate: 11025,
       windowSize: 1024,
       hopSize: 512,
-      bandEdges: [1, 10, 20, 40, 80, 160, 512],
-      peakAlpha: 1.0,
-      silenceThreshold: 1.0,
-      peakContinuityBins: 1,
+      neighborhood: { bins: 10, frames: 5 },
+      minBin: 23,
+      maxBin: 372,
+      peakFloorDb: -70,
+      maxPeaksPerSecond: 20,
       targetZone: { minDeltaFrames: 1, maxDeltaFrames: 64, maxDeltaBins: 128, fanOut: 10 },
     });
   });
 
-  it("keeps band edges increasing and inside the 9-bit bin range", () => {
-    const edges = DEFAULT_PARAMS.bandEdges;
-    for (let i = 1; i < edges.length; i++) expect(edges[i]).toBeGreaterThan(edges[i - 1]);
-    expect(edges.at(-1)).toBeLessThanOrEqual(DEFAULT_PARAMS.windowSize / 2);
-    expect(edges.at(-1)).toBeLessThanOrEqual(512);
+  it("keeps the peak bins ordered and inside the 9-bit bin range", () => {
+    expect(DEFAULT_PARAMS.minBin).toBeGreaterThanOrEqual(1);
+    expect(DEFAULT_PARAMS.maxBin).toBeGreaterThan(DEFAULT_PARAMS.minBin);
+    expect(DEFAULT_PARAMS.maxBin).toBeLessThanOrEqual(DEFAULT_PARAMS.windowSize / 2);
+    expect(DEFAULT_PARAMS.maxBin).toBeLessThanOrEqual(512);
   });
 
   it("keeps the target zone inside the 14-bit delta field", () => {
@@ -36,7 +37,7 @@ describe("fingerprint params", () => {
 
   it("cannot be mutated at runtime", () => {
     expect(Object.isFrozen(DEFAULT_PARAMS)).toBe(true);
-    expect(Object.isFrozen(DEFAULT_PARAMS.bandEdges)).toBe(true);
+    expect(Object.isFrozen(DEFAULT_PARAMS.neighborhood)).toBe(true);
     expect(Object.isFrozen(DEFAULT_PARAMS.targetZone)).toBe(true);
   });
 });

@@ -88,7 +88,7 @@ export function formatSummary(summary: IngestSummary): string {
   );
   if (share > FREE_PLAN_BUDGET) {
     lines.push(
-      `  ATENCIÓN: supera el ${FREE_PLAN_BUDGET * 100}% del plan gratuito. Reduce peakAlpha/fanOut.`,
+      `  ATENCIÓN: supera el ${FREE_PLAN_BUDGET * 100}% del plan gratuito. Reduce maxPeaksPerSecond/fanOut.`,
     );
   }
   if (summary.staleTracks > 0) {

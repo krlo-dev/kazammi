@@ -150,8 +150,13 @@ describe("POST /api/recognize", () => {
     });
     const body = recognizeResponseSchema.parse(await response.json());
     if (body.status !== "match") throw new Error("expected a match");
-    const top = body.debug!.histogram.reduce((a, b) => (b[1] > a[1] ? b : a));
-    expect(top[1]).toBe(body.score);
+    // The score adds the votes of the winning offset and its two neighbors.
+    const votes = new Map(body.debug!.histogram);
+    const scores = body.debug!.histogram.map(
+      ([delta]) =>
+        (votes.get(delta - 1) ?? 0) + (votes.get(delta) ?? 0) + (votes.get(delta + 1) ?? 0),
+    );
+    expect(Math.max(...scores)).toBe(body.score);
   });
 
   it("reports saved: true once the session user saved the track", async () => {

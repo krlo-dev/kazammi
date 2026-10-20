@@ -7,7 +7,7 @@ export interface MatchParams {
   minRatio: number;
 }
 
-export const DEFAULT_MATCH_PARAMS: MatchParams = Object.freeze({ minScore: 25, minRatio: 2 });
+export const DEFAULT_MATCH_PARAMS: MatchParams = Object.freeze({ minScore: 15, minRatio: 2 });
 
 export type MatchDecision =
   | {

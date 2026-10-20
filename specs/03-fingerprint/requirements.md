@@ -11,8 +11,8 @@ Referencia matemática: secciones 6 y 7 de [`math-model.md`](../00-foundation/ma
 | ID | Prioridad | Requisito |
 |---|---|---|
 | FP-R1 | M | EL SISTEMA DEBE recibir PCM mono `Float32Array` a 11.025 Hz y producir una lista de hashes `(hash: uint32, t: frame del ancla)`. |
-| FP-R2 | M | EL SISTEMA DEBE detectar picos espectrales por bandas logarítmicas con umbral relativo (coeficiente α) y umbral absoluto de silencio. |
-| FP-R10 | M | SI en el frame anterior la misma banda tuvo un pico a ±B bins, ENTONCES EL SISTEMA DEBE descartar el pico (solo se conserva el inicio de cada nota), de modo que una nota sostenida no repita el mismo pico en frames consecutivos. |
+| FP-R2 | M | EL SISTEMA DEBE detectar picos espectrales como máximos locales 2D (vecindario de ±bins y ±frames) dentro de la banda [minBin, maxBin), con un piso en dB relativo al bin más fuerte y un máximo de picos por segundo que no dependa de dónde empieza la señal. |
+| FP-R10 | M | SI varios valores de un vecindario empatan (diferencia relativa menor que 1e-3), ENTONCES EL SISTEMA DEBE conservar solo el primero en orden (frame, bin), de modo que una nota sostenida y constante no repita el mismo pico frame tras frame y el redondeo no decida cuál gana. |
 | FP-R3 | M | EL SISTEMA DEBE generar hashes combinatorios de 32 bits (9 bits k_ancla, 9 bits k_punto, 14 bits Δt) usando una zona objetivo con fan-out F. |
 | FP-R4 | M | EL SISTEMA DEBE ser determinista: la misma entrada produce exactamente los mismos hashes en el navegador y en Node. |
 | FP-R5 | M | EL SISTEMA DEBE centralizar todos los parámetros en un objeto `FingerprintParams` y exponer `FINGERPRINT_VERSION`, que cambia cada vez que cambia algún parámetro. |
@@ -30,5 +30,5 @@ Referencia matemática: secciones 6 y 7 de [`math-model.md`](../00-foundation/ma
 | FP-R4 | Snapshot test: el hash SHA-256 del arreglo de hashes de una señal fija no cambia entre ejecuciones. |
 | FP-R6 | Señal sintética desplazada `d · hopSize` muestras: en la región común, mismos valores hash con tiempos desplazados en d. |
 | FP-R8 | La misma señal multiplicada por 0,1 produce los mismos hashes. |
-| FP-R2 | Silencio (ceros) produce 0 picos; ruido blanco produce menos de 6 picos por frame. |
-| FP-R10 | Una senoidal constante de 5 s produce un único pico en su banda (el del primer frame); una senoidal cuya frecuencia salta más de B bins produce un pico nuevo en el frame del salto; los tests de volumen (FP-R8) siguen pasando. |
+| FP-R2 | Silencio (ceros) produce 0 picos; senoidales fuera de [minBin, maxBin) no producen picos; en ruido blanco ningún pico tiene `maxPeaksPerSecond` o más picos más fuertes a ±0,5 s; retrasar la señal d frames desplaza los picos exactamente d. |
+| FP-R10 | Una senoidal constante de 5 s produce un único pico (el del primer frame); dos bins empatados dentro de la tolerancia dejan solo el primero; los tests de volumen (FP-R8) siguen pasando. |

@@ -39,6 +39,12 @@
   - Después de la primera ingesta (`05-ingestion`): `VACUUM ANALYZE` y `EXPLAIN ANALYZE`; anotar el resultado abajo.
   - Sin commit, salvo ajustes.
 
+- [x] **T8. Desfase con tolerancia de ±1 frame**
+  - Cubre: CAT-R5.
+  - Origen: pruebas con micrófono real (`06-recognition` T11). La ventana `RANGE BETWEEN 1 PRECEDING AND 1 FOLLOWING` suma los votos de los desfases vecinos antes de elegir el mejor de cada canción.
+  - Verifica: test de integración con los votos repartidos entre los desfases 40 y 41 (cuentan 40, no 20); latencia en Neon sin cambios (p95 425 ms con 12 s).
+  - Commit: `perf(catalog): score offsets with the votes of their neighbors`
+
 ## Resultados medidos
 
 | Medida | Valor |
