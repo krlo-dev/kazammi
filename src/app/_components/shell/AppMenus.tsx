@@ -56,7 +56,7 @@ export function ProfileMenu({ name, email }: { name: string; email: string }) {
             type="button"
             onClick={signOut}
             disabled={leaving}
-            className="mt-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-fg transition-colors hover:bg-glass-strong disabled:opacity-60"
+            className="mt-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-fg transition-colors focus-visible:outline-offset-[-2px] hover:bg-glass-strong disabled:opacity-60"
           >
             <LogOut aria-hidden className="h-[18px] w-[18px] text-fg-2" strokeWidth={1.75} />
             {leaving ? "Cerrando sesión…" : "Cerrar sesión"}
@@ -78,7 +78,7 @@ export function NavMenu() {
     >
       {(close) => (
         <nav aria-label="Principal">
-          <ul>
+          <ul className="flex flex-col gap-1.5">
             {NAV.map(({ href, label, icon: Icon }) => {
               const current = href === "/" ? pathname === "/" : pathname.startsWith(href);
               return (
@@ -87,7 +87,7 @@ export function NavMenu() {
                     href={href}
                     onClick={close}
                     aria-current={current ? "page" : undefined}
-                    className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-fg-2 transition-colors hover:bg-glass-strong hover:text-fg aria-[current=page]:bg-glass-strong aria-[current=page]:text-fg"
+                    className="flex min-h-12 items-center gap-3 rounded-xl px-3 text-fg-2 transition-colors focus-visible:outline-offset-[-2px] hover:bg-glass-strong hover:text-fg aria-[current=page]:bg-glass-strong aria-[current=page]:text-fg"
                   >
                     <Icon aria-hidden className="h-5 w-5" strokeWidth={1.75} />
                     {label}
