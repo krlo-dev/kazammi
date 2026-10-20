@@ -28,6 +28,7 @@ import { TrackRow } from "../library/TrackRow";
 import { StateMessage } from "../ui/StateMessage";
 import { MatchView } from "./MatchView";
 import { Orb, type OrbProgress } from "./Orb";
+import { RecentStack } from "./RecentStack";
 
 const ATTEMPTS = 3;
 
@@ -247,26 +248,36 @@ function Home({
 }
 
 function MyMusic({ recent }: { recent: TrackView[] }) {
+  const heading = (
+    <h2 id="my-music" className="text-xl font-medium tracking-[-0.015em]">
+      Mis canciones
+    </h2>
+  );
+  const seeAll = (
+    <Link href="/saved" className="btn-pill min-h-9 px-3.5 text-sm">
+      Ver todo
+    </Link>
+  );
+  if (recent.length > 1) {
+    return (
+      <section aria-labelledby="my-music" className="mx-auto w-full lg:max-w-md">
+        <RecentStack tracks={recent} heading={heading} action={seeAll} />
+      </section>
+    );
+  }
+
   return (
     <section aria-labelledby="my-music" className="mx-auto w-full lg:max-w-md">
       <div className="mb-3 flex items-center justify-between">
-        <h2 id="my-music" className="text-xl font-medium tracking-[-0.015em]">
-          Mis canciones
-        </h2>
-        {recent.length > 0 && (
-          <Link href="/saved" className="btn-pill min-h-9 px-3.5 text-sm">
-            Ver todo
-          </Link>
-        )}
+        {heading}
+        {recent.length > 0 && seeAll}
       </div>
       {recent.length > 0 ? (
         <div>
-          <ul className="flex flex-col gap-2.5">
-            {recent.map((track) => (
-              <TrackRow key={track.id} track={track} />
-            ))}
+          <ul>
+            <TrackRow track={recent[0]} />
           </ul>
-          {/* Cards stacked behind the list, as in the reference: more lives in Guardadas. */}
+          {/* Cards stacked behind the only song, as in the reference: more lives in Guardadas. */}
           <div aria-hidden className="mx-auto w-[94%]">
             <div className="h-2 rounded-b-[1rem] border-x border-b border-hairline bg-white/[0.04]" />
             <div className="mx-auto h-1.5 w-[94%] rounded-b-[0.875rem] border-x border-b border-hairline bg-white/[0.025]" />
