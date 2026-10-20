@@ -22,6 +22,7 @@ Como desarrollador, quiero un comando que tome la carpeta de canciones de prueba
 | ING-R12 | S | `--dry-run` DEBE procesar todo sin escribir en la base y mostrar el tamaño estimado. |
 | ING-R13 | M | La ingesta NUNCA DEBE ejecutarse dentro de la app desplegada, y el audio NUNCA DEBE subirse al repositorio. |
 | ING-R14 | M | EL SISTEMA DEBE guardar el año como desconocido (`null`) cuando la etiqueta trae 1970, el año que escriben los editores de tags cuando la fecha estaba vacía. |
+| ING-R15 | S | EL SISTEMA DEBE guardar por canción una muestra de 5 s de su tramo más intenso (la ventana de 5 s con más energía), en MP3 estéreo a 128 kb/s con fundidos cortos. SI una canción ya indexada no tiene muestra, ENTONCES la ingesta normal se la agrega sin tocar sus fingerprints. SI la muestra falla, ENTONCES la canción se indexa igual. |
 
 ## Criterios de aceptación
 

@@ -11,7 +11,7 @@ data/                     # en .gitignore
 ```
 
 - Tamaño recomendado: entre 20 y 60 canciones variadas en género, más 5 a 10 en `songs-holdout/`.
-- El audio vive solo en la PC. A Neon van metadatos, una portada reducida y los fingerprints (que no permiten reconstruir el audio).
+- El audio completo vive solo en la PC. A Neon van metadatos, una portada reducida, los fingerprints (que no permiten reconstruir el audio) y una muestra de 5 s por canción (ING-R15).
 - Antes de indexar, revisar las etiquetas con cualquier editor ID3 (p. ej. Mp3tag): título, artista, álbum, año, género y portada.
 
 ## Flujo
@@ -21,7 +21,9 @@ listar archivos -> calcular SHA-256 -> omitir existentes
   -> [pool de concurrencia]
        music-metadata -> etiquetas + portada -> sharp (webp 512)
        ffmpeg -> Float32Array -> fingerprint()
-  -> [cola secuencial] insertTrackWithFingerprints (una transacción por canción)
+       loudestWindow(pcm) -> ffmpeg -ss <inicio> -t 5 -> MP3 de la muestra
+  -> [cola secuencial] insertTrackWithFingerprints (una transacción por canción) + setPreview
+  (una canción ya indexada sin muestra solo recibe su muestra: relleno de catálogos viejos)
   -> VACUUM ANALYZE + app_meta + resumen
 ```
 
@@ -59,6 +61,7 @@ Código de salida: `0` sin errores, `2` si algún archivo falló (el resto se in
 | `scripts/ingest/scan.ts` | Listado de archivos y SHA-256 |
 | `scripts/ingest/decode.ts` | ffmpeg -> `Float32Array` |
 | `scripts/ingest/metadata.ts` | Etiquetas, deducción por nombre de archivo, portada |
+| `scripts/ingest/preview.ts` | `loudestWindow` (ventana de 5 s con más energía, en pasos de 0,25 s) y `encodePreview` (ffmpeg a MP3) |
 | `scripts/ingest/pool.ts` | Pool de concurrencia simple |
 | `scripts/ingest/report.ts` | Progreso y resumen |
 

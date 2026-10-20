@@ -28,6 +28,8 @@ export const recognizedTrackSchema = z.object({
   year: z.int().nullable(),
   durationSec: z.number(),
   coverUrl: z.string().nullable(),
+  /** 5 s MP3 sample of the loudest stretch, or null when the track has none. */
+  previewUrl: z.string().nullable(),
 });
 
 export const matchResponseSchema = z.object({

@@ -10,6 +10,7 @@ import { DEFAULT_PARAMS } from "@/modules/fingerprint";
 import { decodeToPcm } from "./decode";
 import { runIngest, VersionMismatchError } from "./ingest";
 import { normalizeCover, readMetadata } from "./metadata";
+import { encodePreview } from "./preview";
 import { formatSummary } from "./report";
 
 const HELP = `Uso: npm run ingest -- [opciones]
@@ -75,6 +76,7 @@ async function main(): Promise<number> {
         decode: (file) => decodeToPcm(file, { sampleRate: DEFAULT_PARAMS.sampleRate }),
         readMetadata,
         normalizeCover,
+        encodePreview: (file, startSec) => encodePreview(file, startSec),
         log: (line) => console.log(line),
       },
     );

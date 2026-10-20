@@ -23,6 +23,7 @@ const match: MatchResponse = {
     year: null,
     durationSec: 180,
     coverUrl: null,
+    previewUrl: null,
   },
   saved: false,
   confidence: 0.9,

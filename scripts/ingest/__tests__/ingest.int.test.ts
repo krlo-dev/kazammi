@@ -4,7 +4,14 @@ import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createCatalogRepository, type CatalogRepository } from "@/modules/catalog";
-import { appMeta, fingerprints, trackCovers, tracks, type Database } from "@/modules/db";
+import {
+  appMeta,
+  fingerprints,
+  trackCovers,
+  trackPreviews,
+  tracks,
+  type Database,
+} from "@/modules/db";
 import { createTestDb } from "@/modules/db/testing";
 import { FINGERPRINT_VERSION } from "@/modules/fingerprint";
 
@@ -55,6 +62,7 @@ function fakeDeps(catalog: CatalogRepository | null, overrides: Partial<IngestDe
       return { ...name, album: "Album", genre: "Pop", year: 2001, picture };
     },
     normalizeCover: async (picture) => Uint8Array.from([...picture, 1]),
+    encodePreview: async (_file, startSec) => Uint8Array.from([0xff, 0xfb, Math.round(startSec)]),
     log: (line) => log.push(line),
     ...overrides,
   };
@@ -134,11 +142,33 @@ describe("runIngest (PGlite)", () => {
     expect(await db.select().from(appMeta)).toEqual([
       { key: "fingerprint_version", value: String(FINGERPRINT_VERSION) },
     ]);
+    expect(rows.every((r) => r.hasPreview)).toBe(true);
+    expect(await db.$count(trackPreviews)).toBe(3);
+    const preview = await catalog.getPreview(rows[0].id);
+    expect(preview?.mime).toBe("audio/mpeg");
+    expect(preview!.startSec).toBeGreaterThanOrEqual(0);
+    expect(preview!.startSec).toBeLessThanOrEqual(12 - 5);
 
     const second = await runIngest(options(), deps);
     expect(second).toMatchObject({ inserted: 0, skipped: 3, errors: [] });
     expect(await db.$count(tracks)).toBe(3);
     expect(await db.$count(fingerprints)).toBe(rows.reduce((sum, r) => sum + r.hashCount, 0));
+  });
+
+  it("adds the sample to a known song that has none, without touching its fingerprints", async () => {
+    const { deps, contents } = fakeDeps(catalog);
+    await songs({ "Artist A - Song One.mp3": "melody:12:1" }, contents);
+    const failing = { ...deps, encodePreview: () => Promise.reject(new Error("no lame")) };
+    const first = await runIngest(options(), failing);
+    expect(first).toMatchObject({ inserted: 1, errors: [] });
+    const [row] = await db.select().from(tracks);
+    expect(row.hasPreview).toBe(false);
+
+    const second = await runIngest(options(), deps);
+    expect(second).toMatchObject({ inserted: 0, skipped: 1, errors: [] });
+    const [after] = await db.select().from(tracks);
+    expect(after).toMatchObject({ id: row.id, hasPreview: true, hashCount: row.hashCount });
+    expect(await db.$count(trackPreviews)).toBe(1);
   });
 
   it("reports undecodable, too short and untitled files and keeps going", async () => {

@@ -21,7 +21,8 @@ Response 200, con match:
   "status": "match",
   "track": {
     "id": 42, "title": "...", "artist": "...", "album": "...", "genre": "Rock", "year": 2015,
-    "durationSec": 213.4, "coverUrl": "/api/tracks/42/cover"
+    "durationSec": 213.4, "coverUrl": "/api/tracks/42/cover",
+    "previewUrl": "/api/tracks/42/preview"
   },
   "saved": false,
   "confidence": 0.87,
@@ -91,7 +92,7 @@ export function createRecognizer(deps: {
 1. Validar versión contra `catalog.getStats().fingerprintVersion` (cacheado en memoria del proceso).
 2. `catalog.findCandidates(hashes, times, 10)`.
 3. `decide(candidates, params)`.
-4. Si hay match, `catalog.getTracksByIds([trackId])` y se arma `coverUrl` si `hasCover`. Con `debug: true`, en paralelo, `catalog.getOffsetHistogram(trackId, hashes, times, 200)`: los 200 desfases más votados del ganador, ordenados por desfase (método nuevo del catálogo).
+4. Si hay match, `catalog.getTracksByIds([trackId])` y se arman `coverUrl` si `hasCover` y `previewUrl` si `hasPreview`. Con `debug: true`, en paralelo, `catalog.getOffsetHistogram(trackId, hashes, times, 200)`: los 200 desfases más votados del ganador, ordenados por desfase (método nuevo del catálogo).
 5. Medir tiempos con `performance.now()`.
 
 Las dependencias se inyectan para poder testear el caso de uso con un repositorio falso.

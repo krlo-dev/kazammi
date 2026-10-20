@@ -28,6 +28,12 @@
   - Commit (si hubo ajuste): `perf(fingerprint): tune peak density for catalog size`
   - Estado: sin ajuste. El tamaño cabe de sobra; la densidad de hashes afecta el tiempo de la consulta (ver resultados) y se decide en `06-recognition`.
 
+- [x] **T8. Muestra de audio de 5 s**
+  - Cubre: ING-R15 y `04-catalog` CAT-R9.
+  - Pedido de Krlo (2026-10-20): escuchar 5 s de la canción desde el resultado y las listas. Decisiones de Krlo: el tramo más intenso (casi siempre el coro) y el botón en el resultado y en cada fila.
+  - Verifica: tests de `loudestWindow` y `encodePreview` (con ffmpeg); la ingesta crea la muestra y rellena una canción ya indexada sin tocar sus fingerprints; `npm run db:migrate` y `npm run ingest` en `dev` agregaron la muestra a las 7 canciones (79 KB cada una, 8,8 s).
+  - Commit: `feat(catalog): add 5 s audio samples of the loudest stretch of each song`
+
 - [x] **T7. Año 1970 como desconocido**
   - Cubre: ING-R14.
   - Origen: revisión de `08-ui` (2026-10-19). Las 7 canciones de `data/songs/` traen `TYER=1970` en sus etiquetas ID3, y el resultado mostraba "Discovery · 1970" (Discovery es de 2001). Decisión de Krlo: la ingesta lo ignora.

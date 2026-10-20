@@ -70,6 +70,7 @@ function memoryRecognizer(songs: EvalSong[]): Recognize {
         year: null,
         durationSec: 0,
         coverUrl: null,
+        previewUrl: null,
       },
       confidence: decision.confidence,
       offsetSeconds: (decision.delta * DEFAULT_PARAMS.hopSize) / SAMPLE_RATE,

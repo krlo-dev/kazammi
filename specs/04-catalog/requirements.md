@@ -27,6 +27,7 @@ Como sistema de reconocimiento, necesito guardar los metadatos de las canciones,
 | CAT-R6 | M | EL SISTEMA DEBE obtener canciones por id (para el resultado del reconocimiento y la biblioteca). |
 | CAT-R7 | S | EL SISTEMA DEBE exponer estadísticas: total de canciones, total de fingerprints, versión indexada, tamaño de la tabla. |
 | CAT-R8 | M | SI una canción se borra, ENTONCES sus fingerprints y portada DEBEN borrarse en cascada. |
+| CAT-R9 | S | EL SISTEMA DEBE guardar una muestra de audio de 5 s por canción (MP3, en una tabla aparte, con `has_preview` en `tracks`) y servirla por `GET /api/tracks/[id]/preview` con sesión y caché inmutable. SI una canción se borra, ENTONCES su muestra se borra en cascada. |
 
 ## Criterios de aceptación
 
@@ -36,3 +37,4 @@ Como sistema de reconocimiento, necesito guardar los metadatos de las canciones,
 | CAT-R2 | En la rama `dev` de Neon, `EXPLAIN ANALYZE` de la consulta muestra `Index Only Scan using fingerprints_hash_idx` y `Heap Fetches: 0` tras `VACUUM ANALYZE`. |
 | CAT-R3 | La respuesta de la portada trae `Content-Type: image/webp` y `Cache-Control: public, max-age=31536000, immutable`. |
 | CAT-R8 | Borrar una canción en PGlite deja 0 fingerprints y 0 portadas de ella. |
+| CAT-R9 | `setPreview` guarda o reemplaza la muestra y marca `hasPreview`; la ruta responde 401 sin sesión, 404 sin muestra y `audio/mpeg` con caché inmutable. |

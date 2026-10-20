@@ -45,6 +45,12 @@
   - Verifica: test de integración con los votos repartidos entre los desfases 40 y 41 (cuentan 40, no 20); latencia en Neon sin cambios (p95 425 ms con 12 s).
   - Commit: `perf(catalog): score offsets with the votes of their neighbors`
 
+- [x] **T9. Muestra de audio por canción**
+  - Cubre: CAT-R9.
+  - Tabla `track_previews` y columna `tracks.has_preview` (migración `0004_track_previews`), `getPreview` y `setPreview` en el repositorio y la ruta `GET /api/tracks/[id]/preview`.
+  - Verifica: test de integración del repositorio y test de la ruta en PGlite (401, 404, 400 e `audio/mpeg` con caché inmutable).
+  - Commit: ver `05-ingestion` T8 (un solo commit para la muestra).
+
 ## Resultados medidos
 
 | Medida | Valor |

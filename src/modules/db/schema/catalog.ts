@@ -29,6 +29,7 @@ export const tracks = pgTable("tracks", {
   year: integer("year"),
   durationSec: real("duration_sec").notNull(),
   hasCover: boolean("has_cover").notNull().default(false),
+  hasPreview: boolean("has_preview").notNull().default(false),
   fingerprintVersion: integer("fingerprint_version").notNull(),
   hashCount: integer("hash_count").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -39,6 +40,17 @@ export const trackCovers = pgTable("track_covers", {
     .primaryKey()
     .references(() => tracks.id, { onDelete: "cascade" }),
   mime: text("mime").notNull(),
+  data: bytea("data").notNull(),
+});
+
+/** 5 s audio sample of the loudest stretch of the song, played from the result and lists. */
+export const trackPreviews = pgTable("track_previews", {
+  trackId: integer("track_id")
+    .primaryKey()
+    .references(() => tracks.id, { onDelete: "cascade" }),
+  mime: text("mime").notNull(),
+  /** Where the sample starts in the song. */
+  startSec: real("start_sec").notNull(),
   data: bytea("data").notNull(),
 });
 

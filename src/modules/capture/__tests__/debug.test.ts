@@ -71,6 +71,7 @@ describe("toRecognizerDebug", () => {
           year: null,
           durationSec: 1,
           coverUrl: null,
+          previewUrl: null,
         },
         saved: false,
         confidence: 1,

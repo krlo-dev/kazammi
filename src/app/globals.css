@@ -492,3 +492,22 @@
     display: none;
   }
 }
+
+/* Sample ring: fills over the 5 s of a track's sample (PreviewButton). */
+.kz-preview-progress {
+  stroke-dashoffset: 100;
+  animation: kz-preview-fill 5s linear forwards;
+}
+
+@keyframes kz-preview-fill {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kz-preview-progress {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

@@ -3,10 +3,16 @@ import type { RecognizedTrack } from "@/shared";
 /** What the UI needs of a track. Serializable, so it crosses from Server to Client Components. */
 export type TrackView = RecognizedTrack;
 
-/** Catalog or library track -> TrackView, with the cover route when it has one. */
-export function toTrackView(track: Omit<TrackView, "coverUrl"> & { hasCover: boolean }): TrackView {
-  const { hasCover, ...rest } = track;
-  return { ...rest, coverUrl: hasCover ? `/api/tracks/${track.id}/cover` : null };
+/** Catalog or library track -> TrackView, with the cover and sample routes it has. */
+export function toTrackView(
+  track: Omit<TrackView, "coverUrl" | "previewUrl"> & { hasCover: boolean; hasPreview: boolean },
+): TrackView {
+  const { hasCover, hasPreview, ...rest } = track;
+  return {
+    ...rest,
+    coverUrl: hasCover ? `/api/tracks/${track.id}/cover` : null,
+    previewUrl: hasPreview ? `/api/tracks/${track.id}/preview` : null,
+  };
 }
 
 /** 213.4 -> "3:33". */

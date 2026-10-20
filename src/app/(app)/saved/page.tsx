@@ -1,4 +1,4 @@
-import { Bookmark } from "lucide-react";
+import { ArrowLeft, Bookmark } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -28,6 +28,10 @@ async function Saved() {
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 pb-16 pt-8 sm:px-6 lg:pt-12">
+      <Link href="/" className="btn-pill mb-6 min-h-10 px-3.5 text-sm">
+        <ArrowLeft aria-hidden className="h-4 w-4" strokeWidth={1.75} />
+        Identificar
+      </Link>
       <PageTitle
         first="Guardadas"
         lead="Tu playlist general: todo lo que guardas, lo más reciente primero."
